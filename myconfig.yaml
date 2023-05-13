@@ -1,0 +1,16 @@
+piVersion: v1
+kind: Pod
+metadata:
+  name: chesspro-pod
+  labels:
+    app: chesspro
+spec:
+  containers:
+  - name: frontend
+    image: myfrontendimage:v1
+    ports:
+    - containerPort: 3000
+  - name: backend
+    image: mybackendimage:v1
+    ports:
+    - containerPort: 5000
