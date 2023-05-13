@@ -1,5 +1,5 @@
 # Choisissez une image de base qui convient à votre application Node.js
-FROM node:16-alpine
+FROM node:14-alpine
 
 # Définir le répertoire de travail dans l'image Docker
 WORKDIR /app
