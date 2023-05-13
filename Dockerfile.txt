@@ -2,7 +2,7 @@
 FROM node:14-alpine
 
 # Définir le répertoire de travail dans l'image Docker
-WORKDIR /app
+WORKDIR /backend
 
 # Copier les fichiers de l'application dans l'image Docker
 COPY package.json package-lock.json ./backend/
