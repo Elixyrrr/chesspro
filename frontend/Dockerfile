@@ -5,12 +5,12 @@ FROM node:14-alpine
 WORKDIR /app
 
 # Copie le package.json et le package-lock.json dans le conteneur Docker
-COPY package*.json ./
+COPY package*.json
 
 # Installe les dépendances du projet
 RUN npm install
 
-# Copie le fichier index.js dans le conteneur Docker
+# Copie le fichier index.js dans le conteneur DockerMy Project 29chessp
 COPY index.js .
 
 # Expose le port 8000 pour que le conteneur Docker puisse écouter les connexions entrantes
