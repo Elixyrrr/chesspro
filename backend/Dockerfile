@@ -5,9 +5,8 @@ FROM node:16-alpine
 WORKDIR /app
 
 # Copier les fichiers de l'application dans l'image Docker
-COPY package.json package-lock.json
-COPY server.js
-
+COPY package.json package-lock.json ./
+COPY server.js ./
 
 # Installer les dépendances de l'application
 RUN npm install
