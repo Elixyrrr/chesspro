@@ -4,12 +4,12 @@ FROM node:14-alpine
 # Définir le répertoire de travail dans l'image Docker
 WORKDIR /backend
 
-# Copier les fichiers de l'application dans l'image Docker
-COPY package.json package-lock.json ./backend/
-COPY backend/server.js ./backend/
-
-# Installer les dépendances de l'application
+# Copier le fichier package.json et installer les dépendances
+COPY package.json .
 RUN npm install
+
+# Copier le reste des fichiers de l'application dans l'image Docker
+COPY backend/ .
 
 # Exposer le port que l'application va utiliser
 EXPOSE 3000
