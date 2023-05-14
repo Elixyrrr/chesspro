@@ -7,7 +7,7 @@ app.set('views', __dirname + '/views');
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.json());
 console.log(bodyParser);
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -490,9 +490,9 @@ function partieNulle() {
 
 function updateStatus() {
   let status = '';
-  let moveColor = 'Noir';
+  let moveColor = 'Blanc';
   if (game.turn() === 'b') {
-    moveColor = 'Blanc';
+    moveColor = 'Noir';
   }
 
   // Vérifie s'il y a échec et mat

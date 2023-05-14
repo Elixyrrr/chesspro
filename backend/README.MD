@@ -60,6 +60,17 @@ ROUTE:
 
 }
 
+{
+    Route POST pour récupérer les pseudos des joueurs dans la base de données:
+    "http://localhost:3000/api/players/search/"
+    
+    Route POST pour rechercher un joueur dans la base de données:
+    "http://localhost:3000/api/players/search:pseudo"
+
+    Route GET pour recupérer le profil d'un joueur dans la base de données:
+    "http://localhost:3000/api/players/search:pseudo"
+
+}
 
 
 
