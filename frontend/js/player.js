@@ -45,19 +45,18 @@ fetch('/api/user/profile', {
 const url = window.location.href;
 const pseudo = url.split("/")[4];
 
-    fetch('/api/players/search/'+pseudo, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json'
-      }
-  })
+fetch('/api/players/search/'+pseudo, {
+  method: 'GET',
+  headers: {
+      'Content-Type': 'application/json'
+    }
+})
   .then(response => {
     console.log('Réponse du serveur');
     if (response.ok) {
       return response.json();
     } else {
       console.error("Le profil n'existe pas");
-      window.location.href="/Error";
     }
   })
   .then(data => {
