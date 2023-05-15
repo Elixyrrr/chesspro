@@ -21,7 +21,11 @@ logoutButton.addEventListener('click', (event) => {
 
 
 const tokenCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
-
+if (!tokenCookie) {
+  console.log('Token manquant');
+  // Redirection vers la page de connexion
+  window.location.href = '/Connexion';
+}
 fetch('/api/parties/historique', {
   method: 'GET',
   headers: {

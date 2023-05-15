@@ -44,13 +44,6 @@ fetch('/api/user/profile', {
 })
 .catch(error => console.error(error));
 
-
-
-if (!tokenCookie) {
-  console.log('Token manquant');
-  // Redirection vers la page de connexion
-  window.location.href = '/Connexion';
-}
 if (tokenCookie) {
  // Afficher le bouton "Profil" et le bouton "Déconnexion"
  document.getElementById('profil').style.display = 'block';
