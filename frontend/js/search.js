@@ -94,7 +94,7 @@ function rechercher() {
   const data1 ={
     pseudo: selectedPseudo
   }
-  fetch(`api/players/search/${selectedPseudo}`,{
+  fetch("api/players/search/"+selectedPseudo,{
     method: 'POST',
     body: JSON.stringify(data1),
     headers: {

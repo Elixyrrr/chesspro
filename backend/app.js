@@ -115,6 +115,9 @@ app.get('/Recherche', (req, res) => {
 app.get('/search/:pseudo', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/html/player.html'));
 });
+app.get('/Error', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/html/Error.html'));
+});
 
 //Route d'authentification
 app.use('/api/auth', authRoutes);

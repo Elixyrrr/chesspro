@@ -56,7 +56,8 @@ const pseudo = url.split("/")[4];
     if (response.ok) {
       return response.json();
     } else {
-      console.error("Vous n'êtes pas authentifié");
+      console.error("Le profil n'existe pas");
+      window.location.href="/Error";
     }
   })
   .then(data => {
@@ -64,13 +65,12 @@ const pseudo = url.split("/")[4];
     console.log(data);
     // mise à jour de l'affichage avec les informations récupérées
     document.getElementById('pseudo').textContent = data.pseudo;
+    document.querySelector("h1").textContent = "Profil de "+data.pseudo;
     document.getElementById('partiejoué').textContent = data.partiejoué;
     document.getElementById('partiegagné').textContent = data.partiegagné;
     document.getElementById('partieperdu').textContent = data.partieperdu;
   })
   .catch(error => console.error(error));
-
-document.querySelector("h1").innerHTML += " " + pseudo;
 
 
 if (tokenCookie) {
