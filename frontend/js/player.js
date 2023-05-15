@@ -57,6 +57,7 @@ fetch('/api/players/search/'+pseudo, {
       return response.json();
     } else {
       console.error("Le profil n'existe pas");
+      window.location.replace("/Error");
     }
   })
   .then(data => {
