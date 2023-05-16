@@ -49,9 +49,9 @@ exports.modifyProfile = async (req, res, next) => {
           .status(400)
           .json({ message: "L'adresse e-mail est déjà utilisée." });
       }
-
+      const hashedEmail = CryptoJS.HmacSHA256(req.body.email, process.env.CRYPTOJS_CHIFFREMENT).toString();
+      await User.updateOne({ _id: userId }, { email: hashedEmail });
       await InfoUser.updateOne({ userId }, { email: req.body.email });
-      await User.updateOne({ _id: userId }, { email: req.body.email });
     }
 
     // Vérifier si le pseudo et l'email ont été modifiés
