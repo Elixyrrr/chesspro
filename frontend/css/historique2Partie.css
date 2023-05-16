@@ -97,6 +97,7 @@ body {
     margin-left: 400px;
     margin-top: 10px;
     font-family: Georgia,'Times New Roman', Times, serif;
+    overflow: auto;
 }
 
 #Historique2 th {
