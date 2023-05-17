@@ -264,3 +264,93 @@ background-color: white;
 left: 685px;
 top: 610px;
 }
+
+/* Media Queries */
+
+@media only screen and (max-width: 1200px) {
+  .topnav {
+    width: 150px;
+  }
+  
+  .topnav a {
+    font-size: 18px;
+  }
+  
+  .coupjoue table {
+    width: 200px;
+    height: 150px;
+    left: 200px;
+  }
+  
+  #cadreEchiquier {
+    width: 400px;
+    height: 500px;
+    left: 320px;
+  }
+  
+  #myBoard {
+    width: 370px;
+    left: 340px;
+  }
+  
+  .gameBoard {
+    width: 370px;
+    left: 215px;
+  }
+  
+  #nomjoueur1,
+  #nomjoueur2 {
+    font-size: 20px;
+  }
+  
+  #timer1,
+  #timer2 {
+    font-size: 20px;
+    left: 120px;
+  }
+  
+  .test #abandonner {
+    left: 50%;
+    top: 630px;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .topnav {
+    display: none;
+  }
+  
+  #cadreEchiquier {
+    width: 300px;
+    height: 380px;
+    left: 220px;
+  }
+  
+  #myBoard {
+    width: 270px;
+    left: 240px;
+    top: 80px;
+  }
+  
+  .gameBoard {
+    width: 270px;
+    left: 115px;
+    margin-top: -40px;
+  }
+  
+  #nomjoueur1,
+  #nomjoueur2 {
+    font-size: 18px;
+  }
+  
+  #timer1,
+  #timer2 {
+    font-size: 18px;
+    left: 90px;
+  }
+  
+  .test #abandonner {
+    left: 50%;
+    top: 650px;
+  }
+}

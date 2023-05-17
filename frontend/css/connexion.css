@@ -114,3 +114,20 @@ body {
   background-color: rgb(253, 190, 190);
   color: black;
 }
+@media only screen and (max-width: 600px) {
+  .register {
+    margin-top: 80px; /* Ajustez la marge supérieure pour éviter de chevaucher la barre de navigation */
+  }
+
+  .register h1 {
+    font-size: 25px;
+  }
+
+  .register .champ input {
+    font-size: 14px;
+  }
+
+  .register .action input {
+    font-size: 18px;
+  }
+}
