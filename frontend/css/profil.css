@@ -138,39 +138,3 @@ body {
     font-size: 15px;
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
-/* Media Queries */
-
-@media only screen and (max-width: 1200px) {
-    .topnav {
-      width: 150px;
-    }
-  
-    .topnav a {
-      font-size: 18px;
-    }
-  
-    .profile {
-      width: 400px;
-      left: 320px;
-    }
-  
-    .user-info span {
-      left: 20px;
-    }
-  }
-  
-  @media only screen and (max-width: 900px) {
-    .topnav {
-      display: none;
-    }
-  
-    .profile {
-      width: 300px;
-      left: 220px;
-    }
-  
-    .user-info span {
-      font-size: 18px;
-      left: 20px;
-    }
-  }
