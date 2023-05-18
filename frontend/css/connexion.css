@@ -114,20 +114,114 @@ body {
   background-color: rgb(253, 190, 190);
   color: black;
 }
-@media only screen and (max-width: 1000px) {
+@media (max-width: 767px) {
+  body {
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+  .topnav {
+    position: static;
+    width: 100%;
+    height: auto;
+    background-color: #333;
+    border-radius: 4px;
+    border: 4px solid rgb(220, 218, 218);
+    box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+  }
+
+  .topnav a {
+    display: block;
+    padding: 10px 20px;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: white;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+
+  .topnav .inscr {
+    top: auto;
+    left: auto;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    position: static;
+  }
+
+  .topnav .pageConnex {
+    font-size: 25px;
+    top: auto;
+    text-align: center;
+    color:  rgb(253, 190, 190);
+  }
+
+  .topnav .pageConnex:hover {
+    font-weight: normal;
+  }
+
+  .topnav .inscr:hover {
+    left: auto;
+  }
+
+  /*---register---*/
+
   .register {
-    margin-top: 80px; /* Ajustez la marge supérieure pour éviter de chevaucher la barre de navigation */
+    position: static;
+    width: 100%;
+    height: auto;
+    background-color: #333;
+    box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2);
+    border: 4px solid rgb(220, 218, 218);
+    border-radius: 4px;
+    margin: 20px;
+    padding: 20px;
   }
 
   .register h1 {
-    font-size: 25px;
+    color: white;
+    font-size: 35px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .register .champ {
+    padding: 12px 5px;
+  }
+
+  .register .champ label {
+    color: white;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    margin-left: 10px;
+    font-style: italic;
   }
 
   .register .champ input {
-    font-size: 14px;
+    background-color: rgb(190, 188, 188);
+    font-size: 16px;
+    font-family: 'Rubik', sans-serif;
+    width: 97%;
+    padding: 10px 10px;
+    border: 0;
+    border-bottom: 1px solid #747474;
   }
 
   .register .action input {
-    font-size: 18px;
+    color: white;
+    font-size: 23px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    background-color: #9190905e;
+  }
+
+  .register .action input:hover {
+    background-color: rgb(253, 190, 190);
+    color: black;
   }
 }
