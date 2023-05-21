@@ -114,7 +114,7 @@ body {
   background-color: rgb(253, 190, 190);
   color: black;
 }
-@media (max-width: 767px) {
+@media (max-width: 414px) {
   body {
     overflow-y: auto;
     overflow-x: auto;
@@ -150,6 +150,7 @@ body {
   }
 
   .topnav .pageConnex {
+    position: static;
     font-size: 25px;
     top: auto;
     text-align: center;

@@ -489,6 +489,7 @@ function partieNulle() {
 
 
 function updateStatus() {
+  $pgn.html(game.pgn());
   let status = '';
   let moveColor = 'Blanc';
   if (game.turn() === 'b') {
@@ -524,7 +525,6 @@ function updateStatus() {
   $('#status').html(status);
   $status.html(status);
   $fen.html(game.fen());
-  $pgn.html(game.pgn());
   listePP(game);
 }
 
