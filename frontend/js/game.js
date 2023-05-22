@@ -189,20 +189,30 @@ function onDragStart (source, piece){
     assignedColor = color; // Stockage de la valeur dans une variable
   });
 
-function onDrop (source, target){
-  removeGreySquares();
-  var move=game.move({
-    from: source,
-    to: target,
-    promotion: 'q'
-    //Optionnel: il faut modifier pour avoir tous les choix possibles. ---------------------------
-  });
-  if (move === null) return 'snapback';
-  updateStatus();
-  // Envoie le coup joué uniquement dans la salle spécifique
-  socket.emit('move', {move: move, room: 'roomid'});
-}
-
+  function onDrop(source, target) {
+    removeGreySquares();
+    
+    /* Demander à l'utilisateur la pièce de promotion souhaitée (par défaut, la reine 'q')
+    var promotionPiece = prompt("Choisissez la pièce de promotion (q, r, n, b) :");
+    if (!promotionPiece) {
+      promotionPiece = 'q'; // Par défaut, si aucun choix n'est saisi
+    }*/
+    
+    var move = game.move({
+      from: source,
+      to: target,
+      promotion: "q"
+    });
+    
+    if (move === null) {
+      return 'snapback';
+    }
+    
+    updateStatus();
+    
+    // Envoyer le coup joué avec la pièce de promotion à la salle spécifique
+    socket.emit('move', { move: move, room: 'roomid' });
+  }
 function onMouseoverSquare (square, piece) {
   // Donne les coups possibles
   var moves=game.moves({
@@ -498,14 +508,8 @@ function updateStatus() {
 
   // Vérifie s'il y a échec et mat
   if (game.in_checkmate()) {
-    let winner = '';
-    if (moveColor === 'Blanc') {
-      winner = moveColor;
-      echecEtMat();
-    } else {
-      winner = moveColor;
-      echecEtMat();
-    }
+    let winner = moveColor === 'Blanc' ? 'Noir' : 'Blanc';
+    echecEtMat();
     status = 'Fin de partie, ' + winner + ' a gagné.';
   } else if (game.in_draw()) { // Vérifie s'il y a égalité
     if (!partieNulleEnregistree) {
