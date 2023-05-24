@@ -33,7 +33,9 @@ exports.signup = (req, res, next) => {
             .catch(error => res.status(400).json({ error: "Erreur lors de la création de l'info utilisateur." }));
         })
         .catch(error => {
-          if (error.code === 11000 && error.keyPattern && error.keyPattern.pseudo === 1) {
+          if (error.code === 11000 && error.keyPattern && error.keyPattern.email === 1) {
+            res.status(409).json({ error: "Cette adresse email est déjà utilisée." });
+          }else if (error.code === 11000 && error.keyPattern && error.keyPattern.pseudo === 1) {
             res.status(409).json({ error: "Un utilisateur avec ce pseudo existe déjà." });
           } else {
             res.status(500).json({ error: "Erreur lors de la création de l'utilisateur." });
