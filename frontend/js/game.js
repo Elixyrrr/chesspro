@@ -511,7 +511,7 @@ function updateStatus() {
     let winner = moveColor === 'Blanc' ? 'Noir' : 'Blanc';
     echecEtMat();
     status = 'Fin de partie, ' + winner + ' a gagné.';
-  } else if (game.in_draw()) { // Vérifie s'il y a égalité
+  }  else if (game.in_draw()) { // Vérifie s'il y a égalité
     if (!partieNulleEnregistree) {
       partieNulle();
       partieNulleEnregistree = true; // Marquer la partie nulle comme enregistrée

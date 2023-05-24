@@ -17,6 +17,6 @@ module.exports= (req,res,next) => {
     if(passwordSchema.validate(req.body.password)){
         next();
     }else{
-        return res.status(400).json({error: "Le mot de passe est trop simple: "+passwordSchema.validate('req.body.password',{ list: true})})
+        return res.status(400).json({error: "Le mot de passe est trop simple: Minimum 5 caractères , majuscules et minuscules , doit avoir 2 chiffres"})
     }
 }
