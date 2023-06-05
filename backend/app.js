@@ -46,7 +46,7 @@ client.on('ready', () => {
   console.log(`Connecté en tant que ${client.user.tag}`);
 });
 
-client.login('MTExNDk1NzA2ODg3NzY5MjkyOA.GtHQnD.4RNL8A7tnKPcTZfeGSuqsFXu5owmfMbjuycMlU');
+client.login(process.env.TOKENDISCORD);
 
 client.on('ready', () => {
   console.log(`Connecté en tant que ${client.user.tag}`);
