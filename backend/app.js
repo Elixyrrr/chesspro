@@ -12,6 +12,45 @@ app.use(bodyParser.json());
 console.log(bodyParser);
 app.use(bodyParser.urlencoded({ extended: true }));
 const path = require('path');
+const { CommandoClient, Command } = require('discord.js-commando');
+const { Structures } = require('discord.js');
+
+const client = new CommandoClient({
+  commandPrefix: '&', // Préfixe personnalisé
+  owner: '1003196143909490788', // ID de ton compte Discord
+});
+
+client.registry
+  .registerDefaultTypes()
+  .registerDefaultGroups()
+  .registerDefaultCommands()
+  .registerGroup('custom', 'Commandes personnalisées') // Enregistre un groupe personnalisé
+  .registerCommand(
+    class extends Command {
+      constructor(client) {
+        super(client, {
+          name: 'game',
+          group: 'custom',
+          memberName: 'game',
+          description: 'Redirection vers un site de jeu.',
+        });
+      }
+
+      run(message) {
+        message.reply('Clique sur https://chessgame-dnw8.onrender.com/room pour lancer une partie');
+      }
+    }
+  );
+
+client.on('ready', () => {
+  console.log(`Connecté en tant que ${client.user.tag}`);
+});
+
+client.login('MTExNDk1NzA2ODg3NzY5MjkyOA.GtHQnD.4RNL8A7tnKPcTZfeGSuqsFXu5owmfMbjuycMlU');
+
+client.on('ready', () => {
+  console.log(`Connecté en tant que ${client.user.tag}`);
+});
 
 
 // Configuration des variables d'environnements

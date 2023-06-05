@@ -38,13 +38,16 @@ function generateRoomId() {
 // Middleware d'authentification pour les sockets
 io.use(async (socket, next) => {
   const cookieHeader = socket.handshake.headers.cookie;
+
   if (cookieHeader) {
     const token = cookieHeader.split("=")[1];
     console.log(token);
+
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.JWT_KEY_TOKEN);
         const user = await User.findById(decoded.userId);
+
         if (user) {
           socket.id = decoded.userId;
           socket.pseudo = user.pseudo;
@@ -56,6 +59,9 @@ io.use(async (socket, next) => {
       } catch (err) {
         // Si le token est invalide, on passe à l'étape suivante sans appeler next avec une erreur
       }
+    } else {
+      const sessionToken = jwt.sign({ userId: generateRandomId() }, process.env.JWT_KEY_TOKEN);
+      socket.token = sessionToken;
     }
   }
 
@@ -105,6 +111,7 @@ io.on('connection', (socket) => {
           socket.emit('assignId', assignedColor, userId1);
           socket.emit('updateTimer', assignedColor, whiteTimer);
         } else if (clientCount === 2) {
+          // Événement pour mettre à jour le statut
           assignedColor = 'black';
           const pseudo2 = socket.pseudo;
           const userId2 = socket.id;
@@ -119,6 +126,7 @@ io.on('connection', (socket) => {
           io.to(FRoomId).emit('assignId', { white: userId2, black: userId1 });
           io.to(FRoomId).emit('updateTimer', { white: blackTimer, black: whiteTimer});
           io.to(FRoomId).emit('redirectClients', '/game');
+          
         }
 
         JoinRoom = true;
@@ -157,7 +165,8 @@ io.on('connection', (socket) => {
     }
   });
 
-  // --------------------- Socket, envoi les messages, et les coups.--------------------------
+
+  // --------------------- Socket, envoi les messages, et les coups.-------------------------
   socket.on('chat message', (msg, pseudo) => {
     console.log('message: ' + socket.pseudo, msg);
     const roomId = getRoomBySocketId(socket.id);
@@ -173,6 +182,7 @@ io.on('connection', (socket) => {
 });
 
 });
+
 // Fonction pour obtenir l'ID de la salle à partir du socketID
 function getRoomBySocketId(socketId) {
 for (const [roomId, clients] of rooms.entries()){

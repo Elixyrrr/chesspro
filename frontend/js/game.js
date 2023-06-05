@@ -132,7 +132,6 @@ socket.on('updateTimer', ({ white, black }) => {
 
 
 
-
 socket.on('assignId', ({ white, black }) => {
   whiteplayerId = white;
   blackplayerId = black;
@@ -239,6 +238,7 @@ function onSnapEnd () {
   board.position(game.fen());
   socket.emit('update_board', {fen: game.fen(), room: 'roomid'});
 }
+var partieabandonne=false;
 function abandonnerPartie() {
   let status = '';
   let result1 = '';
@@ -250,8 +250,7 @@ function abandonnerPartie() {
   
   if (assignedColor === "white") {
     status = 'Les blancs ont abandonné la partie.';
-    $status.html(status);
-    updateStatus();
+    $('#status').html(status);
     alert('Les blancs ont abandonné la partie.');
     if (joueur1 === whiteplayer) {
       result1 = 'Gagnant';
@@ -262,8 +261,7 @@ function abandonnerPartie() {
     }
   } else {
     status = 'Les noirs ont abandonné la partie.';
-    $status.html(status);
-    updateStatus();
+    $('#status').html(status);
     alert('Les noirs ont abandonné la partie.');
     if (joueur2 === blackplayer) {
       result1 = 'Perdant';
@@ -324,10 +322,21 @@ function abandonnerPartie() {
   }).catch(error => {
     console.error(error);
   });
-
-  game.game_over = true;
   $status.html(status);
+  game.game_over = true;
 }
+/*// Écouteur d'événement pour le départ du joueur
+window.addEventListener('beforeunload', function(event) {
+  // Appeler la fonction abandonnerPartie ici
+  abandonnerPartie();
+
+  // Personnaliser le message d'alerte qui s'affiche au joueur
+  var confirmationMessage = 'Êtes-vous sûr de vouloir quitter la partie ?';
+
+  // La valeur de retour spécifique à l'événement est requise pour certains navigateurs
+  event.returnValue = confirmationMessage;
+  return confirmationMessage;
+});*/
 
 function echecEtMat() {
   let result1 = '';
@@ -530,6 +539,8 @@ function updateStatus() {
   $status.html(status);
   $fen.html(game.fen());
   listePP(game);
+
+  
 }
 
 // Renvoie au serveur la position des pièces grace au FEN.
@@ -544,6 +555,7 @@ socket.on('move', function (data){
 socket.on('update_board', function(data){
   board.position(data.fen);
 });
+
 //Configuration des options du plateau.
 var config={
   draggable: true,
