@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 console.log(bodyParser);
 app.use(bodyParser.urlencoded({ extended: true }));
 const path = require('path');
-const { CommandoClient, Command } = require('discord.js-commando');
+/*const { CommandoClient, Command } = require('discord.js-commando');
 const { Structures } = require('discord.js');
 
 const client = new CommandoClient({
@@ -50,7 +50,7 @@ client.login(process.env.TOKENDISCORD);
 
 client.on('ready', () => {
   console.log(`Connecté en tant que ${client.user.tag}`);
-});
+});*/
 
 
 // Configuration des variables d'environnements

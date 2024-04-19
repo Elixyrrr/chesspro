@@ -71,89 +71,157 @@ var game = new Chess();
 var $status = $('#status')
 var $fen = $('#fen')
 var $pgn = $('#pgn')
+// Supposons que cela soit quelque part au début de votre logique de jeu
+let positionHistory = {};
+
+// Supposons que cela soit après un coup valide dans votre jeu
+/*function afterMove(game) {
+    let fen = game.fen().split(' ')[0]; // Prend seulement la partie position de la chaîne FEN
+    positionHistory[fen] = (positionHistory[fen] || 0) + 1; // Incrémente le compteur pour cette position
+    // Mettre à jour l'affichage, etc.
+}*/
+
   
+function minimax(depth, game, player) {
   
-  function minimax(depth, game, player, alpha, beta) {
-    if (depth === 0 || game.game_over()) {
-      
+
+  if (depth === 0 || game.game_over()) {
       return evaluateBoard(game);
-    }
-    
-    var possibleMoves = game.moves();
+  }
   
-    if (player === 'w') {
-      var bestMove = -Infinity;
-      for (var i = 0; i < possibleMoves.length; i++) {
+  var possibleMoves = game.moves();
+  if (player === 'w') {
+      let bestMove = -Infinity;
+      for (let i = 0; i < possibleMoves.length; i++) {
           game.move(possibleMoves[i]);
-          bestMove = Math.max(bestMove, minimax(depth - 1, game, 'b', alpha, beta));
+          bestMove = Math.max(bestMove, minimax(depth - 1, game, 'b', positionHistory));
           game.undo();
-          alpha = Math.max(alpha, bestMove);
-          if (beta <= alpha) {
-              break;
-          }
       }
       return bestMove;
   } else {
-      var bestMove = Infinity;
-      for (var i = 0; i < possibleMoves.length; i++) {
+      let bestMove = Infinity;
+      for (let i = 0; i < possibleMoves.length; i++) {
           game.move(possibleMoves[i]);
-          bestMove = Math.min(bestMove, minimax(depth - 1, game, 'w', alpha, beta));
+          bestMove = Math.min(bestMove, minimax(depth - 1, game, 'w', positionHistory));
           game.undo();
-          beta = Math.min(beta, bestMove);  
-          if (beta <= alpha) {
-              break;
-          }
       }
       return bestMove;
-    }
   }
+}
+
   
-  function evaluateBoard(game) {
+function evaluateBoard(game) {
+  var fenStr = game.fen();
+  var boardFen = fenStr.split(' ')[0];
+  let score = 0;
+  const pieceValues = {
+    'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 100,
+    'p': -1, 'n': -3, 'b': -3, 'r': -5, 'q': -9, 'k': -100
+  };
+  const centralSquares = ['d4', 'e4', 'd5', 'e5',];
+  const pieceSquareTable = {
+    'p': [ // Pawns
+        [0,   0,   0,   0,   0,   0,  0,   0],
+        [5,  10,  10, -20, -20,  10, 10,   5],
+        [5,  -5, -10,   0,   0, -10, -5,   5],
+        [0,   0,   0,  20,  20,   0,  0,   0],
+        [5,   5,  10,  25,  25,  10,  5,   5],
+        [10, 10,  20,  30,  30,  20, 10,  10],
+        [50, 50,  50,  50,  50,  50, 50,  50],
+        [0,   0,   0,   0,   0,   0,  0,   0]
+    ],
+    'n': [ // Knights
+        [-50, -40, -30, -30, -30, -30, -40, -50],
+        [-40, -20,   0,   5,   5,   0, -20, -40],
+        [-30,   5,  10,  15,  15,  10,   5, -30],
+        [-30,   0,  15,  20,  20,  15,   0, -30],
+        [-30,   5,  15,  20,  20,  15,   5, -30],
+        [-30,   0,  10,  15,  15,  10,   0, -30],
+        [-40, -20,   0,   0,   0,   0, -20, -40],
+        [-50, -40, -30, -30, -30, -30, -40, -50]
+    ],
+    'b': [ // Pawns
+        [0,   0,   0,   0,   0,   0,  0,   0],
+        [5,  10,  10, -20, -20,  10, 10,   5],
+        [5,  -5, -10,   0,   0, -10, -5,   5],
+        [0,   0,   0,  20,  20,   0,  0,   0],
+        [5,   5,  10,  25,  25,  10,  5,   5],
+        [10, 10,  20,  30,  30,  20, 10,  10],
+        [50, 50,  50,  50,  50,  50, 50,  50],
+        [0,   0,   0,   0,   0,   0,  0,   0]
+    ],
+    'r': [ // Knights
+        [-50, -40, -30, -30, -30, -30, -40, -50],
+        [-40, -20,   0,   5,   5,   0, -20, -40],
+        [-30,   5,  10,  15,  15,  10,   5, -30],
+        [-30,   0,  15,  20,  20,  15,   0, -30],
+        [-30,   5,  15,  20,  20,  15,   5, -30],
+        [-30,   0,  10,  15,  15,  10,   0, -30],
+        [-40, -20,   0,   0,   0,   0, -20, -40],
+        [-50, -40, -30, -30, -30, -30, -40, -50]
+    ],
+    'q': [ // Knights
+        [-50, -40, -30, -30, -30, -30, -40, -50],
+        [-40, -20,   0,   5,   5,   0, -20, -40],
+        [-30,   5,  10,  15,  15,  10,   5, -30],
+        [-30,   0,  15,  20,  20,  15,   0, -30],
+        [-30,   5,  15,  20,  20,  15,   5, -30],
+        [-30,   0,  10,  15,  15,  10,   0, -30],
+        [-40, -20,   0,   0,   0,   0, -20, -40],
+        [-50, -40, -30, -30, -30, -30, -40, -50]
+    ],
+    'k': [ // Knights
+        [-50, -40, -30, -30, -30, -30, -40, -50],
+        [-40, -20,   0,   5,   5,   0, -20, -40],
+        [-30,   5,  10,  15,  15,  10,   5, -30],
+        [-30,   0,  15,  20,  20,  15,   0, -30],
+        [-30,   5,  15,  20,  20,  15,   5, -30],
+        [-30,   0,  10,  15,  15,  10,   0, -30],
+        [-40, -20,   0,   0,   0,   0, -20, -40],
+        [-50, -40, -30, -30, -30, -30, -40, -50]
+    ],
+  }
     
-    var board = game.fen();
-    let score = 0;
-    const pieceValues = {
-      P: 1,
-      N: 3,
-      B: 3,
-      R: 5,
-      Q: 9,
-      K: 100,
-    };
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const piece = board[row][col];
-        if (piece in pieceValues) {
-          if (piece === piece.toLowerCase()) {
-          // Pièce noire
-            score -= pieceValues[piece.toUpperCase()];
+
+  // Transformer la chaîne FEN en tableau 2D représentant le plateau
+  var rows = boardFen.split('/');
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      let row = rows[rowIndex];
+      let colIndex = 0;
+      
+      for (let charIndex = 0; charIndex < row.length; charIndex++) {
+          let char = row[charIndex];
+          let position = String.fromCharCode(97 + colIndex) + (8 - rowIndex);
+          if (isNaN(char)) {
+              if (char in pieceValues) {
+                  score += pieceValues[char];
+                  let pieceTable = pieceSquareTable[char];
+              if (pieceTable) { // S'assurer que la table existe
+                  // Ajouter/substraire la valeur de la pièce en fonction de sa position sur le plateau
+                  score += pieceTable[7 - rowIndex][colIndex] * (char == char.toLowerCase() ? -1 : 1);
+              }
+                  if (centralSquares.includes(position)) {
+                      score += (char === char.toLowerCase()) ? -20 : 20;
+                  }
+              }
+              
+              colIndex++;
           } else {
-          // Pièce blanche
-            score += pieceValues[piece];
-            // Si la pièce est située au centre de l'échiquier
-          if ((row === 3 || row === 4) && (col === 3 || col === 4)) {
-            if (piece === 'P' || piece === 'N') {
-              score -= 3;
-            } else if (piece === 'B' || piece === 'R') {
-              score -= 3;
-            } else if (piece === 'Q') {
-              score -= 5;
-            } else if (piece === 'K') {
-              score -= -0.4;
-            }
+              colIndex += parseInt(char, 10);
           }
-        }
       }
-    }
   }
+
   return score;
-  }
+}
+
+
   
   function findBestMove(game, depth,player) {
     // Récupère les mouvements possibles
     var possibleMoves = game.moves();
     var bestMove = null;
-    var bestMoveValue = -Infinity;
+    var bestMoveValue = Infinity;
   // game over
     if (possibleMoves.length === 0) return
     // Initialise les variables pour stocker les meilleurs mouvements
@@ -167,13 +235,13 @@ var $pgn = $('#pgn')
       
   
       // Calcule la valeur du mouvement en utilisant l'algorithme Minimax
-      var moveValue = minimax(depth - 1, game, player,-Infinity,Infinity);
-      
+      var moveValue = minimax(depth - 1, game, player, -Infinity, Infinity);
+      console.log("Mouvement évalué : ", move, " avec un score de : ", moveValue);
       // Annule le mouvement
       game.undo();
   
       // Si la valeur du mouvement est meilleure que le meilleur mouvement actuel, le remplace
-      if (moveValue > bestMoveValue) {
+      if (moveValue < bestMoveValue) {
         bestMoveValue = moveValue;
         bestMove = move;
         
@@ -182,6 +250,8 @@ var $pgn = $('#pgn')
     
     // Retourne le meilleur mouvement
     console.log("Le meilleur mouvement est retourné");
+    console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
+
     return bestMove;
   }
   
