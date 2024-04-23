@@ -82,31 +82,41 @@ let positionHistory = {};
 }*/
 
   
-function minimax(depth, game, player) {
-  
-
+function minimax(depth, game, player, alpha, beta) {
   if (depth === 0 || game.game_over()) {
-      return evaluateBoard(game);
+    return evaluateBoard(game);
   }
-  
+
+  var bestScore = (player === 'w') ? -Infinity : Infinity;
+  var delta = 50; // Valeur delta hypothétique; ajustez selon vos besoins
   var possibleMoves = game.moves();
-  if (player === 'w') {
-      let bestMove = -Infinity;
-      for (let i = 0; i < possibleMoves.length; i++) {
-          game.move(possibleMoves[i]);
-          bestMove = Math.max(bestMove, minimax(depth - 1, game, 'b', positionHistory));
-          game.undo();
+  var threshold = bestScore - delta;
+
+  for (let i = 0; i < possibleMoves.length; i++) {
+    game.move(possibleMoves[i]);
+    let score = minimax(depth - 1, game, player === 'w' ? 'b' : 'w', alpha, beta);
+    game.undo();
+
+    if (player === 'w') {
+      if (score > bestScore) {
+        bestScore = score;
+        alpha = Math.max(alpha, bestScore);
       }
-      return bestMove;
-  } else {
-      let bestMove = Infinity;
-      for (let i = 0; i < possibleMoves.length; i++) {
-          game.move(possibleMoves[i]);
-          bestMove = Math.min(bestMove, minimax(depth - 1, game, 'w', positionHistory));
-          game.undo();
+      if (beta <= alpha) break; // Élagage alpha-beta standard
+    } else {
+      if (score < bestScore) {
+        bestScore = score;
+        beta = Math.min(beta, bestScore);
       }
-      return bestMove;
+      if (beta <= alpha) break; // Élagage alpha-beta standard
+    }
+
+    // Élagage delta pour ignorer les coups nettement inférieurs
+    if (player === 'w' && bestScore > threshold) break;
+    if (player === 'b' && bestScore < threshold) break;
   }
+
+  return bestScore;
 }
 
   
@@ -151,7 +161,7 @@ function evaluateBoard(game) {
         [0,   0,   0,   0,   0,   0,  0,   0]
     ],
     'r': [ // Knights
-        [-50, -40, -30, -30, -30, -30, -40, -50],
+        [50, 40, -30, -30, -30, -30, 40, 50],
         [-40, -20,   0,   5,   5,   0, -20, -40],
         [-30,   5,  10,  15,  15,  10,   5, -30],
         [-30,   0,  15,  20,  20,  15,   0, -30],
@@ -300,9 +310,7 @@ function onDrop (source, target) {
 
     console.log("Tour de l'ia");
     
-    var depth = 2; // Profondeur de recherche minimax.
-    
-    
+    var depth = 35;
     var bestMove = findBestMove(game, depth, 'b');
     game.move(bestMove);
     
