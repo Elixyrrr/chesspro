@@ -18,8 +18,14 @@ app.get('/', function(req, res) {
 app.get('/Partie',function(req, res) {
     res.sendFile(path.join(__dirname + '/html/LienPartie.html'));
 });
-app.get('/Ordi',function(req, res) {
-    res.sendFile(path.join(__dirname + '/html/Ordi.html'));
+app.get('/OrdiFacile',function(req, res) {
+    res.sendFile(path.join(__dirname + '/html/OrdiFacile.html'));
+});
+app.get('/OrdiIntermediaire',function(req, res) {
+  res.sendFile(path.join(__dirname + '/html/OrdiIntermediaire.html'));
+});
+app.get('/OrdiDifficile',function(req, res) {
+  res.sendFile(path.join(__dirname + '/html/OrdiDifficile.html'));
 });
 app.get('/Accueil',function(req, res) {
     res.sendFile(path.join(__dirname + '/html/pageAccueil.html'));
@@ -54,6 +60,10 @@ app.get('/Historique2',function(req, res) {
 app.get('/Room', (req, res) => {
     res.sendFile(`${__dirname}/html/room.html`);
   });
+
+  app.get('/choixDifficulte',function(req, res) {
+    res.sendFile(path.join(__dirname + '/html/choixDifficulte.html'));
+});
 
 
 // Fonction pour générer un ID de salle aléatoire
