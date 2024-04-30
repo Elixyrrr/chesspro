@@ -184,7 +184,7 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
   positionCount++;
 
   if (depth === 0 || game.game_over()) {
-    // Fonction de fin de partie
+    
     return [null, score];
   }
 
@@ -240,8 +240,6 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
 
 function evaluateBoard(game, move, prevscore, color) {
   if (!move) return prevscore;
-  
-
   
   if (game.in_check()) {
     // Ajuste le score si il y a echec
