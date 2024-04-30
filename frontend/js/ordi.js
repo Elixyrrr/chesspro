@@ -301,15 +301,19 @@ function onDrop (source, target) {
 
   // Si c'est au tour de l'IA de jouer.
   if (game.turn() === 'b') {
-
-    console.log("Tour de l'ia");
-    // profondeur
-    var depth = 3;
-    var bestMove = findBestMove(game, depth, 'b');
-    game.move(bestMove);
+    window.setTimeout(function () {
+      console.log("Tour de l'ia");
+      // profondeur
+      var depth = 3;
+      var bestMove = findBestMove(game, depth, 'b');
+      game.move(bestMove);
+      board.position(game.fen());
+      updateStatus();
+      
+      
+    }, 100);
     
     
-    updateStatus()
     
     console.log("Le coup est joué");
   
