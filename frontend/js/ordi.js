@@ -82,42 +82,39 @@ let positionHistory = {};
 }*/
 
   
-function minimax(depth, game, player, alpha, beta) {
+
+function minimax(depth, game, alpha, beta, isMaximizingPlayer) {
   if (depth === 0 || game.game_over()) {
-    return evaluateBoard(game);
+    // Notez que nous renvoyons un score positif ou négatif basé sur la perspective des blancs
+    return isMaximizingPlayer ? evaluateBoard(game) : -evaluateBoard(game);
   }
 
-  var bestScore = (player === 'w') ? -Infinity : Infinity;
-  var delta = 50; // Valeur delta hypothétique; ajustez selon vos besoins
-  var possibleMoves = game.moves();
-  var threshold = bestScore - delta;
+  let possibleMoves = game.moves();
+  let bestScore = isMaximizingPlayer ? -Infinity : Infinity;
 
   for (let i = 0; i < possibleMoves.length; i++) {
     game.move(possibleMoves[i]);
-    let score = minimax(depth - 1, game, player === 'w' ? 'b' : 'w', alpha, beta);
+    // Maintenant, nous appelons minimax avec la nouvelle profondeur et les valeurs alpha et beta correctement ajustées
+    let score = minimax(depth - 1, game, -beta, -alpha, !isMaximizingPlayer);
     game.undo();
-
-    if (player === 'w') {
-      if (score > bestScore) {
-        bestScore = score;
-        alpha = Math.max(alpha, bestScore);
-      }
-      if (beta <= alpha) break; // Élagage alpha-beta standard
+    
+    if (isMaximizingPlayer) {
+      bestScore = Math.max(bestScore, score);
+      alpha = Math.max(alpha, score);
     } else {
-      if (score < bestScore) {
-        bestScore = score;
-        beta = Math.min(beta, bestScore);
-      }
-      if (beta <= alpha) break; // Élagage alpha-beta standard
+      bestScore = Math.min(bestScore, score);
+      beta = Math.min(beta, score);
     }
-
-    // Élagage delta pour ignorer les coups nettement inférieurs
-    if (player === 'w' && bestScore > threshold) break;
-    if (player === 'b' && bestScore < threshold) break;
+    
+    // Si le meilleur score actuel est mieux que le pire score de l'adversaire, coupe
+    if (bestScore >= beta) {
+      break;
+    }
   }
-
+  
   return bestScore;
 }
+
 
   
 function evaluateBoard(game) {
@@ -125,70 +122,71 @@ function evaluateBoard(game) {
   var boardFen = fenStr.split(' ')[0];
   let score = 0;
   const pieceValues = {
-    'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 100,
-    'p': -1, 'n': -3, 'b': -3, 'r': -5, 'q': -9, 'k': -100
+    'P': 3, 'N': 9, 'B': 9, 'R': 15, 'Q': 27, 'K': 100,
+    'p': -3, 'n': -9, 'b': -9, 'r': -15, 'q': -27, 'k': -100
   };
   const centralSquares = ['d4', 'e4', 'd5', 'e5',];
+  
   const pieceSquareTable = {
     'p': [ // Pawns
         [0,   0,   0,   0,   0,   0,  0,   0],
-        [5,  10,  10, -20, -20,  10, 10,   5],
-        [5,  -5, -10,   0,   0, -10, -5,   5],
-        [0,   0,   0,  20,  20,   0,  0,   0],
-        [5,   5,  10,  25,  25,  10,  5,   5],
-        [10, 10,  20,  30,  30,  20, 10,  10],
-        [50, 50,  50,  50,  50,  50, 50,  50],
-        [0,   0,   0,   0,   0,   0,  0,   0]
+        [0,   0,   0,   0,   0,   0,  0,   0],
+        [.5,  -.5, -1,   -1,   -1, -1, -.5,   .5],
+        [1,   0,  -1,  -2,  -2,   -1,  0,   1],
+        [-.5,   -.5,  -1,  -2.5,  -2.5,  -1,  -.5,   -.5],
+        [-1, -1,  -2,  -3,  -3,  -2, -1,  -1],
+        [-1, -2,  -3,  -3,  -2,  -2, -2,  -2],
+        [-10,   -10,   -10,   -10,   -10,   -10,  -10,   -10]
     ],
     'n': [ // Knights
-        [-50, -40, -30, -30, -30, -30, -40, -50],
-        [-40, -20,   0,   5,   5,   0, -20, -40],
-        [-30,   5,  10,  15,  15,  10,   5, -30],
-        [-30,   0,  15,  20,  20,  15,   0, -30],
-        [-30,   5,  15,  20,  20,  15,   5, -30],
-        [-30,   0,  10,  15,  15,  10,   0, -30],
-        [-40, -20,   0,   0,   0,   0, -20, -40],
-        [-50, -40, -30, -30, -30, -30, -40, -50]
+        [-5, -4, 3, 3, 3, -3, -4, -5],
+        [-4, -2,   0,   5,   5,   0, -20, -4],
+        [3,   0.5,  -1,  -1.5,  -1.5,  -1,   -0.5, 3],
+        [3,   0,  -1.5,  -2,  -2,  -1.5,   0, 3],
+        [-3,   0.5,  1.5,  2,  2,  1.5,   0.5, 3],
+        [-3,   0,  1,  1.5,  1.5,  1,   0, 3],
+        [4, -2,   0,   0,   0,   0, -2, 4],
+        [5, -4, -3, 3, 3, 3, -4, -5]
     ],
-    'b': [ // Pawns
+    'b': [ // bishop
         [0,   0,   0,   0,   0,   0,  0,   0],
-        [5,  10,  10, -20, -20,  10, 10,   5],
-        [5,  -5, -10,   0,   0, -10, -5,   5],
-        [0,   0,   0,  20,  20,   0,  0,   0],
-        [5,   5,  10,  25,  25,  10,  5,   5],
-        [10, 10,  20,  30,  30,  20, 10,  10],
-        [50, 50,  50,  50,  50,  50, 50,  50],
+        [5,  1,  1, -2, -2,  1, 1,   5],
+        [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
+        [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+        [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+        [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+        [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
         [0,   0,   0,   0,   0,   0,  0,   0]
     ],
-    'r': [ // Knights
-        [50, 40, -30, -30, -30, -30, 40, 50],
-        [-40, -20,   0,   5,   5,   0, -20, -40],
-        [-30,   5,  10,  15,  15,  10,   5, -30],
-        [-30,   0,  15,  20,  20,  15,   0, -30],
-        [-30,   5,  15,  20,  20,  15,   5, -30],
-        [-30,   0,  10,  15,  15,  10,   0, -30],
-        [-40, -20,   0,   0,   0,   0, -20, -40],
-        [-50, -40, -30, -30, -30, -30, -40, -50]
+    'r': [ // Tour
+      [0,   0,   0,   0,   0,   0,  0,   0],
+      [5,  1,  1, -2, -2,  1, 1,   5],
+      [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
+      [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [0,   0,   0,   0,   0,   0,  0,   0]
     ],
-    'q': [ // Knights
-        [-50, -40, -30, -30, -30, -30, -40, -50],
-        [-40, -20,   0,   5,   5,   0, -20, -40],
-        [-30,   5,  10,  15,  15,  10,   5, -30],
-        [-30,   0,  15,  20,  20,  15,   0, -30],
-        [-30,   5,  15,  20,  20,  15,   5, -30],
-        [-30,   0,  10,  15,  15,  10,   0, -30],
-        [-40, -20,   0,   0,   0,   0, -20, -40],
-        [-50, -40, -30, -30, -30, -30, -40, -50]
+    'q': [ // queen
+      [0,   0,   0,   0,   0,   0,  0,   0],
+      [5,  1,  1, -2, -2,  1, 1,   5],
+      [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
+      [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [0,   0,   0,   0,   0,   0,  0,   0]
     ],
-    'k': [ // Knights
-        [-50, -40, -30, -30, -30, -30, -40, -50],
-        [-40, -20,   0,   5,   5,   0, -20, -40],
-        [-30,   5,  10,  15,  15,  10,   5, -30],
-        [-30,   0,  15,  20,  20,  15,   0, -30],
-        [-30,   5,  15,  20,  20,  15,   5, -30],
-        [-30,   0,  10,  15,  15,  10,   0, -30],
-        [-40, -20,   0,   0,   0,   0, -20, -40],
-        [-50, -40, -30, -30, -30, -30, -40, -50]
+    'k': [ // King
+      [10,   10,   10,   10,   10,   10,  10,   10],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [2, 2.5,  2, 2, 2, -2.5, 1,  1],
+      [-4,   -4,   -4,   -3,   -3,   -3,  -4,   -4]
     ],
   }
     
@@ -201,7 +199,7 @@ function evaluateBoard(game) {
       
       for (let charIndex = 0; charIndex < row.length; charIndex++) {
           let char = row[charIndex];
-          let position = String.fromCharCode(97 + colIndex) + (8 - rowIndex);
+          let position = String.fromCharCode( colIndex) + ( rowIndex);
           if (isNaN(char)) {
               if (char in pieceValues) {
                   score += pieceValues[char];
@@ -211,8 +209,14 @@ function evaluateBoard(game) {
                   score += pieceTable[7 - rowIndex][colIndex] * (char == char.toLowerCase() ? -1 : 1);
               }
                   if (centralSquares.includes(position)) {
-                      score += (char === char.toLowerCase()) ? -20 : 20;
+                      score += (char === char.toLowerCase()) ? -2 : 2;
                   }
+                  let pieceColor = char == char.toLowerCase() ? 'white' : 'black';
+                  let opponentPiece = game.get(position);
+                  if (opponentPiece && opponentPiece.color !== pieceColor) {
+                      // Si l'IA met une pièce adverse en danger, diminue le score
+                      score -= pieceValues;
+    }
               }
               
               colIndex++;
@@ -221,50 +225,49 @@ function evaluateBoard(game) {
           }
       }
   }
-
+  console.log("le score est retourné")
   return score;
 }
 
 
   
-  function findBestMove(game, depth,player) {
-    // Récupère les mouvements possibles
-    var possibleMoves = game.moves();
-    var bestMove = null;
-    var bestMoveValue = Infinity;
-  // game over
-    if (possibleMoves.length === 0) return
-    // Initialise les variables pour stocker les meilleurs mouvements
-    
+function findBestMove(game, depth,player) {
+  // Récupère les mouvements possibles
+  var possibleMoves = game.moves();
+  var bestMove = null;
+  var bestMoveValue = Infinity;
+// game over
+  if (possibleMoves.length === 0) return
+  // Initialise les variables pour stocker les meilleurs mouvements
   
-    // Évalue chaque mouvement possible 
-    for (var i = 0; i < possibleMoves.length; i++) {
-      // Effectue le mouvement
-      var move = possibleMoves[i];
-      game.move(move);
-      
-  
-      // Calcule la valeur du mouvement en utilisant l'algorithme Minimax
-      var moveValue = minimax(depth - 1, game, player, -Infinity, Infinity);
-      console.log("Mouvement évalué : ", move, " avec un score de : ", moveValue);
-      // Annule le mouvement
-      game.undo();
-  
-      // Si la valeur du mouvement est meilleure que le meilleur mouvement actuel, le remplace
-      if (moveValue < bestMoveValue) {
-        bestMoveValue = moveValue;
-        bestMove = move;
-        
-      }
-    }
-    
-    // Retourne le meilleur mouvement
-    console.log("Le meilleur mouvement est retourné");
-    console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
 
-    return bestMove;
+  // Évalue chaque mouvement possible 
+  for (var i = 0; i < possibleMoves.length; i++) {
+    // Effectue le mouvement
+    var move = possibleMoves[i];
+    game.move(move);
+    
+
+    // Calcule la valeur du mouvement en utilisant l'algorithme Minimax
+    var moveValue = minimax(depth - 1, game, player, -Infinity, Infinity);
+    console.log("Mouvement évalué : ", move, " avec un score de : ", moveValue);
+    // Annule le mouvement
+    game.undo();
+
+    // Si la valeur du mouvement est meilleure que le meilleur mouvement actuel, le remplace
+    if (moveValue < bestMoveValue) {
+      bestMoveValue = moveValue;
+      bestMove = move;
+      
+    }
   }
   
+  // Retourne le meilleur mouvement
+  console.log("Le meilleur mouvement est retourné");
+  console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
+
+  return bestMove;
+}
   
 function removeGreySquares () {
   $('#myBoard .square-55d63').css('background', '')
@@ -310,9 +313,10 @@ function onDrop (source, target) {
 
     console.log("Tour de l'ia");
     
-    var depth = 35;
+    var depth = 3;
     var bestMove = findBestMove(game, depth, 'b');
     game.move(bestMove);
+    
     
     updateStatus()
     
@@ -452,8 +456,8 @@ function onDrop (source, target) {
             //si le temps est écoulé.
       if(whitetot==-1){
           alert("Temps écoulé");
-          whitemin.innerHTML = pad(00);
-          whitesec.innerHTML = pad(00);
+          whitemin.innerHTML = pad(0x0);
+          whitesec.innerHTML = pad(0x0);
         }
       }
       return whitetot;
@@ -472,8 +476,8 @@ function onDrop (source, target) {
         //si le temps est écoulé.
       if(blacktot==-1){
           alert("Temps écoulé");
-          blackmin.innerHTML = pad(00);
-          blacksec.innerHTML = pad(00);
+          blackmin.innerHTML = pad(0x0);
+          blacksec.innerHTML = pad(0x0);
         }
       }
       return blacktot;
@@ -523,3 +527,4 @@ function onDrop (source, target) {
   
     $('#flip').on('click', board.flip)
     $('#abandonner').on('click',abandonnerPartie)
+

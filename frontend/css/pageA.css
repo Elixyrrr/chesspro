@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(247, 202, 202);
+  background-color: rgb(102, 119, 133);
 }
 
 /*---------------------STYLE DE LA PAGE D'ACCUEIL------------------*/
@@ -81,7 +81,7 @@ body {
 
 .user-info span {
   position: absolute;
-  color:  rgb(253, 190, 190); 
+  color:  rgb(240, 217, 181); 
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-size: 20px;
   font-style: italic;
@@ -107,7 +107,7 @@ body {
 }
 
 .vertical-menu a:hover {
-  background-color: rgb(253, 190, 190);
+  background-color: rgb(240, 217, 181);
   color: black;
 }
 

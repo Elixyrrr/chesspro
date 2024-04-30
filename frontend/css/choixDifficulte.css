@@ -2,7 +2,7 @@
 
 /* Body */
 body {
-    background-color: rgb(247, 202, 202);
+    background-color: rgb(102, 119, 133);
 }
 
 
@@ -38,11 +38,13 @@ body {
 .topnav .jouer {
     top: 90px;
     left: 20px;
+    
 }
 
 .topnav .ordi {
     top: 150px;
     left: 20px;
+    color:  rgb(253, 190, 190);
 }
 
 .topnav .profil {
