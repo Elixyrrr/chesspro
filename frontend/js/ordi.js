@@ -107,7 +107,7 @@ function minimax(depth, game, alpha, beta, isMaximizingPlayer) {
 }
 
 
-  
+//fonction d'évaluation  
 function evaluateBoard(game) {
   var fenStr = game.fen();
   var boardFen = fenStr.split(' ')[0];

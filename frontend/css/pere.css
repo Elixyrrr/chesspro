@@ -1,6 +1,5 @@
 body {
-    background-color: #f0f0f0
-
+    background-color: rgb(102, 119, 133);
 }
 
 /* -----------------------------STYLE DE LA PAGE PERE--------------------------------------*/
@@ -58,7 +57,7 @@ body {
 }
   
 .vertical-menu a:hover {
-    background-color: rgb(253, 190, 190);
+    background-color: rgb(240, 217, 181);
     color: black;
 }
 
