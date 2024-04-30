@@ -214,6 +214,7 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
 function evaluateBoard(game, move, prevscore, color) {
   if (!move) return prevscore;
 
+<<<<<<< HEAD
   // Simplifie la gestion des pièces capturées
   if ('captured' in move) {
     // Juste utiliser les poids sans PST
@@ -222,6 +223,151 @@ function evaluateBoard(game, move, prevscore, color) {
       prevscore += pieceValue;
     } else {
       prevscore -= pieceValue;
+=======
+//fonction d'évaluation  
+function evaluateBoard(game) {
+  var fenStr = game.fen();
+  var boardFen = fenStr.split(' ')[0];
+  let score = 0;
+  const pieceValues = {
+    'P': 3, 'N': 9, 'B': 9, 'R': 15, 'Q': 27, 'K': 100,
+    'p': -3, 'n': -9, 'b': -9, 'r': -15, 'q': -27, 'k': -100
+  };
+  const centralSquares = ['d4', 'e4', 'd5', 'e5',];
+  
+  const pieceSquareTable = {
+    'p': [ // Pions
+        [0,   0,   0,   0,   0,   0,  0,   0],
+        [0,   0,   0,   0,   0,   0,  0,   0],
+        [.5,  -.5, -1,   -1,   -1, -1, -.5,   .5],
+        [1,   0,  -1,  -2,  -2,   -1,  0,   1],
+        [-.5,   -.5,  -1,  -2.5,  -2.5,  -1,  -.5,   -.5],
+        [-1, -1,  -2,  -3,  -3,  -2, -1,  -1],
+        [-1, -2,  -3,  -3,  -2,  -2, -2,  -2],
+        [-10,   -10,   -10,   -10,   -10,   -10,  -10,   -10]
+    ],
+    'n': [ //Chevalier 
+        [-5, -4, 3, 3, 3, -3, -4, -5],
+        [-4, -2,   0,   5,   5,   0, -20, -4],
+        [3,   0.5,  -1,  -1.5,  -1.5,  -1,   -0.5, 3],
+        [3,   0,  -1.5,  -2,  -2,  -1.5,   0, 3],
+        [-3,   0.5,  1.5,  2,  2,  1.5,   0.5, 3],
+        [-3,   0,  1,  1.5,  1.5,  1,   0, 3],
+        [4, -2,   0,   0,   0,   0, -2, 4],
+        [5, -4, -3, 3, 3, 3, -4, -5]
+    ],
+    'b': [ // bishop
+        [0,   0,   0,   0,   0,   0,  0,   0],
+        [5,  1,  1, -2, -2,  1, 1,   5],
+        [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
+        [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+        [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+        [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+        [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+        [0,   0,   0,   0,   0,   0,  0,   0]
+    ],
+    'r': [ // Tour
+      [0,   0,   0,   0,   0,   0,  0,   0],
+      [5,  1,  1, -2, -2,  1, 1,   5],
+      [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
+      [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [0,   0,   0,   0,   0,   0,  0,   0]
+    ],
+    'q': [ // Reine
+      [0,   0,   0,   0,   0,   0,  0,   0],
+      [5,  1,  1, -2, -2,  1, 1,   5],
+      [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
+      [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
+      [0,   0,   0,   0,   0,   0,  0,   0]
+    ],
+    'k': [ // King
+      [10,   10,   10,   10,   10,   10,  10,   10],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [5,  5,  5, 5,  5,  5,  5,  5 ],
+      [2, 2.5,  2, 2, 2, -2.5, 1,  1],
+      [-4,   -4,   -4,   -3,   -3,   -3,  -4,   -4]
+    ],
+  }
+    
+
+  
+  var rows = boardFen.split('/');
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      let row = rows[rowIndex];
+      let colIndex = 0;
+      
+      for (let charIndex = 0; charIndex < row.length; charIndex++) {
+          let char = row[charIndex];
+          let position = String.fromCharCode( colIndex) + ( rowIndex);
+          if (isNaN(char)) {
+              if (char in pieceValues) {
+                  score += pieceValues[char];
+                  let pieceTable = pieceSquareTable[char];
+              if (pieceTable) { // S'assurer que la table existe
+                  // Ajouter/substraire la valeur de la pièce en fonction de sa position sur le plateau
+                  score += pieceTable[7 - rowIndex][colIndex] * (char == char.toLowerCase() ? -1 : 1);
+              }
+                  if (centralSquares.includes(position)) {
+                      score += (char === char.toLowerCase()) ? -2 : 2;
+                  }
+                  let pieceColor = char == char.toLowerCase() ? 'white' : 'black';
+                  let opponentPiece = game.get(position);
+                  if (opponentPiece && opponentPiece.color !== pieceColor) {
+                      // Si l'IA met une pièce adverse en danger, diminue le score
+                      score -= pieceValues;
+    }
+              }
+              
+              colIndex++;
+          } else {
+              colIndex += parseInt(char, 10);
+          }
+      }
+  }
+  //console.log("le score est retourné")
+  return score;
+}
+
+
+  
+function findBestMove(game, depth,player) {
+  // Récupère les mouvements possibles
+  var possibleMoves = game.moves();
+  var bestMove = null;
+  var bestMoveValue = Infinity;
+  // game over
+  if (possibleMoves.length === 0) return
+  // Initialise les variables pour stocker les meilleurs mouvements
+  
+
+  // Évalue chaque mouvement possible 
+  for (var i = 0; i < possibleMoves.length; i++) {
+    // Effectue le mouvement
+    var move = possibleMoves[i];
+    game.move(move);
+    
+
+    // Calcule la valeur du mouvement en utilisant l'algorithme Minimax
+    var moveValue = minimax(depth - 1, game, player, -Infinity, Infinity);
+    console.log("Mouvement évalué : ", move, " avec un score de : ", moveValue);
+    // Annule le mouvement
+    game.undo();
+
+    // Si la valeur du mouvement est meilleure que le meilleur mouvement actuel, le remplace
+    if (moveValue < bestMoveValue) {
+      bestMoveValue = moveValue;
+      bestMove = move;
+      
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
     }
   }
 
@@ -288,6 +434,7 @@ function onDrop(source, target) {
 
   // Si c'est au tour de l'IA de jouer.
   if (game.turn() === 'b') {
+<<<<<<< HEAD
     console.log("Tour de l'IA");
 
     // Ajoute un délai avant que l'IA joue son coup
@@ -298,6 +445,24 @@ function onDrop(source, target) {
       updateStatus();
       console.log("Le coup de l'IA est joué");
     }, 100); 
+=======
+    window.setTimeout(function () {
+      console.log("Tour de l'ia");
+      // profondeur
+      var depth = 3;
+      var bestMove = findBestMove(game, depth, 'b');
+      game.move(bestMove);
+      board.position(game.fen());
+      updateStatus();
+      
+      
+    }, 100);
+    
+    
+    
+    console.log("Le coup est joué");
+  
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
   }
 }
 

@@ -68,6 +68,10 @@ var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
 var board = null
 var game = new Chess();
+<<<<<<< HEAD
+=======
+var depth=3;
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
 var globalScore = 0;
 var $status = $('#status')
 var $fen = $('#fen')
@@ -178,6 +182,7 @@ var pstOpponent = { w: pst_b, b: pieceSquareTable };
 var pstSelf = { w: pieceSquareTable, b: pst_b };
 
 
+<<<<<<< HEAD
 function count(game) {
   const squares = game.SQUARES;
   let tot = 0;
@@ -202,19 +207,36 @@ function getProfondeur(game) {
   }
 }
 
+=======
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
 function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
   positionCount++;
 
   if (depth === 0 || game.game_over()) {
+<<<<<<< HEAD
       return [null, score];
+=======
+    
+    return [null, score];
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
   }
 
   var children = game.moves({ verbose: true });
 
+<<<<<<< HEAD
   if (children.length === 0) {
       return [null, score];
   }
 
+=======
+  
+  if (children.length === 0) {
+    return [null, score];
+  }
+
+  children.sort(function (a, b) { return 0.5 - Math.random(); });
+
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
   var maxValue = -Infinity;
   var minValue = Infinity;
   var bestMove = null;
@@ -224,6 +246,7 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
       var moveResult = game.move(currMove);
       if (moveResult === null) continue; // Move interdit
 
+<<<<<<< HEAD
       var newscore = evaluateBoard(game, moveResult, score, color);
       var [childBestMove, childValue] = minimax(
           game, depth - 1, alpha, beta, !isMaximizingPlayer, newscore, color
@@ -243,6 +266,22 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
               bestMove = moveResult;
           }
           beta = Math.min(beta, childValue);
+=======
+    // Move interdit
+    if (moveResult === null) continue;
+
+    var newscore= evaluateBoard(game, moveResult, score, color);
+    var [childBestMove, childValue] = minimax(
+      game, depth - 1, alpha, beta, !isMaximizingPlayer, newscore, color
+    );
+
+    game.undo(); 
+
+    if (isMaximizingPlayer) {
+      if (childValue > maxValue) {
+        maxValue = childValue;
+        bestMove = moveResult;
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
       }
 
       if (beta <= alpha) {
@@ -309,11 +348,18 @@ function evaluateBoard(game, move, prevscore, color) {
 
 function findBestMove(game, color, currscore) {
   positionCount = 0;
+<<<<<<< HEAD
   const profondeurinit = getProfondeur(game); 
 
   var [bestMove, bestMoveValue] = minimax(
     game,
     profondeurinit,
+=======
+
+  var [bestMove, bestMoveValue] = minimax(
+    game,
+    depth,
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
     -Infinity,
     Infinity,
     true,
@@ -362,13 +408,21 @@ function onDrop(source, target) {
   if (game.turn() === 'b') {
     
     window.setTimeout(function () {
+<<<<<<< HEAD
       var [bestMove] = findBestMove(game, 'b', globalScore);
+=======
+      var [bestMove, bestMoveValue] = findBestMove(game, 'b', globalScore);
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
       if (bestMove) {
       game.move(bestMove);
       board.position(game.fen());
       updateStatus();}
       
+<<<<<<< HEAD
     }, 50); // ajout d'un délai pour le temps de réflexion
+=======
+    }, 250); // ajout d'un délai pour le temps de réflexion
+>>>>>>> a17b4f52d3e1be53accc3be80f6c714edbebe27f
   }
 }
 
