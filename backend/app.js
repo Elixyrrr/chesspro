@@ -151,18 +151,19 @@ app.get('/Recherche', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/html/search.html'));
 });
 
-app.get('/choixDifficulte',(req, res)=>  {
-  res.sendFile(path.join(__dirname + '../frontend/html/choixDifficulte.html'));
+app.get('/choixDifficulte', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/html/choixDifficulte.html'));
 });
-app.get('/OrdiFacile',(req, res) => {
-  res.sendFile(path.join(__dirname + '../frontend/html/OrdiFacile.html'));
+app.get('/OrdiFacile', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/html/OrdiFacile.html'));
 });
-app.get('/OrdiIntermediaire',(req, res) => {
-res.sendFile(path.join(__dirname + '../frontend/html/OrdiIntermediaire.html'));
+app.get('/OrdiIntermediaire', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/html/OrdiIntermediaire.html'));
 });
-app.get('/OrdiDifficile',(req, res) => {
-res.sendFile(path.join(__dirname + '../frontend/html/OrdiDifficile.html'));
+app.get('/OrdiDifficile', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/html/OrdiDifficile.html'));
 });
+
 app.get('/search/:pseudo', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/html/player.html'));
 });
