@@ -71,20 +71,8 @@ var game = new Chess();
 var $status = $('#status')
 var $fen = $('#fen')
 var $pgn = $('#pgn')
-// Supposons que cela soit quelque part au début de votre logique de jeu
 let positionHistory = {};
 
-// Supposons que cela soit après un coup valide dans votre jeu
-/*function afterMove(game) {
-    let fen = game.fen().split(' ')[0]; // Prend seulement la partie position de la chaîne FEN
-    positionHistory[fen] = (positionHistory[fen] || 0) + 1; // Incrémente le compteur pour cette position
-    // Mettre à jour l'affichage, etc.
-}*/
-
-  
-
-
-//fonction d'évaluation 
 const standardPieceValues = {
   'P': 100, 'N': 320, 'B': 330, 'R': 500, 'Q': 900, 'K': 20000,
   'p': -100, 'n': -320, 'b': -330, 'r': -500, 'q': -900, 'k': -20000
@@ -164,7 +152,7 @@ const standardPST = {
 };
 
 const middlegamePST = {
-  'p': [ // Pawns
+  'p': [ // Pion
     [80, 80, 80, 80, 85, 80, 80, 80],
     [78, 83, 86, 73, 102, 82, 85, 90],
     [7, 29, 21, 44, 50, 31, 44, 7],
@@ -174,7 +162,7 @@ const middlegamePST = {
     [-20, 5, -5, -30, -30, -10, 5, -20],
     [0, 0, 0, 0, 0, 0, 0, 0]
   ],
-  'n': [ // Knights
+  'n': [ // Tour
     [-50, -40, -30, -30, -30, -30, -40, -50],
     [-10, 0, 5, 5, 5, 5, 0, -10],
     [5, 10, 15, 20, 20, 15, 10, 5],
@@ -184,7 +172,7 @@ const middlegamePST = {
     [-20, -10, 0, 5, 5, 0, -10, -20],
     [-30, -20, -10, -5, -5, -10, -20, -30]
   ],
-  'b': [ // Bishops
+  'b': [ // Fou
     [-20, -10, -10, -10, -10, -10, -10, -20],
     [-10, 5, 0, 0, 0, 0, 5, -10],
     [-10, 10, 10, 10, 10, 10, 10, -10],
@@ -194,7 +182,7 @@ const middlegamePST = {
     [10, 15, 15, 15, 15, 15, 15, 10],
     [-10, 5, 0, 0, 0, 0, 5, -10]
   ],
-  'r': [ // Rooks
+  'r': [ // Tour
     [0, 5, 5, 5, 5, 5, 5, 0],
     [-5, 0, 0, 0, 0, 0, 0, -5],
     [-5, 0, 0, 0, 0, 0, 0, -5],
@@ -204,7 +192,7 @@ const middlegamePST = {
     [5, 10, 10, 10, 10, 10, 10, 5],
     [0, 0, 0, 5, 5, 0, 0, 0]
   ],
-  'q': [ // Queens
+  'q': [ // Reine
     [-20, -10, -10, -5, -5, -10, -10, -20],
     [-10, 0, 0, 0, 0, 0, 0, -10],
     [-10, 0, 5, 5, 5, 5, 0, -10],
@@ -214,7 +202,7 @@ const middlegamePST = {
     [-10, 0, 5, 0, 0, 0, 0, -10],
     [-20, -10, -10, -5, -5, -10, -10, -20]
   ],
-  'k': [ // Kings
+  'k': [ // Roi
     [-30, -40, -40, -50, -50, -40, -40, -30],
     [-30, -30, -40, -40, -40, -40, -30, -30],
     [-30, -30, -40, -40, -40, -40, -30, -30],
@@ -224,7 +212,7 @@ const middlegamePST = {
     [20, 20, 0, 0, 0, 0, 20, 20],
     [20, 30, 10, 0, 0, 10, 30, 20]
   ],
-  'k_e': [ // Adjusted king table for endgame
+  'k_e': [ // Roi en fin de partie
     [-50, -40, -30, -20, -20, -30, -40, -50],
     [-30, -20, -10, 0, 0, -10, -20, -30],
     [-30, -10, 20, 30, 30, 20, -10, -30],
@@ -295,7 +283,7 @@ function minimax(depth, game, alpha, beta, isMaximizingPlayer) {
   
   return bestScore;
 }
-
+//fonction d'écaluation
 function evaluateBoard(game) {
   const phase = getGamePhase(game);
   let pieceValues, pst;
@@ -383,8 +371,8 @@ function evaluateBoard(game) {
     }
     
     // Retourne le meilleur mouvement
-    console.log("Le meilleur mouvement est retourné");
-    console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
+    //console.log("Le meilleur mouvement est retourné");
+    //console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
 
     return bestMove;
   }

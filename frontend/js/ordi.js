@@ -71,21 +71,12 @@ var game = new Chess();
 var $status = $('#status')
 var $fen = $('#fen')
 var $pgn = $('#pgn')
-// Supposons que cela soit quelque part au début de votre logique de jeu
 let positionHistory = {};
-
-// Supposons que cela soit après un coup valide dans votre jeu
-/*function afterMove(game) {
-    let fen = game.fen().split(' ')[0]; // Prend seulement la partie position de la chaîne FEN
-    positionHistory[fen] = (positionHistory[fen] || 0) + 1; // Incrémente le compteur pour cette position
-    // Mettre à jour l'affichage, etc.
-}*/
-
   
 
 function minimax(depth, game, alpha, beta, isMaximizingPlayer) {
   if (depth === 0 || game.game_over()) {
-    // Notez que nous renvoyons un score positif ou négatif basé sur la perspective des blancs
+    
     return isMaximizingPlayer ? evaluateBoard(game) : -evaluateBoard(game);
   }
 
@@ -128,7 +119,7 @@ function evaluateBoard(game) {
   const centralSquares = ['d4', 'e4', 'd5', 'e5',];
   
   const pieceSquareTable = {
-    'p': [ // Pawns
+    'p': [ // Pions
         [0,   0,   0,   0,   0,   0,  0,   0],
         [0,   0,   0,   0,   0,   0,  0,   0],
         [.5,  -.5, -1,   -1,   -1, -1, -.5,   .5],
@@ -138,7 +129,7 @@ function evaluateBoard(game) {
         [-1, -2,  -3,  -3,  -2,  -2, -2,  -2],
         [-10,   -10,   -10,   -10,   -10,   -10,  -10,   -10]
     ],
-    'n': [ // Knights
+    'n': [ //Chevalier 
         [-5, -4, 3, 3, 3, -3, -4, -5],
         [-4, -2,   0,   5,   5,   0, -20, -4],
         [3,   0.5,  -1,  -1.5,  -1.5,  -1,   -0.5, 3],
@@ -168,7 +159,7 @@ function evaluateBoard(game) {
       [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
       [0,   0,   0,   0,   0,   0,  0,   0]
     ],
-    'q': [ // queen
+    'q': [ // Reine
       [0,   0,   0,   0,   0,   0,  0,   0],
       [5,  1,  1, -2, -2,  1, 1,   5],
       [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
@@ -191,7 +182,7 @@ function evaluateBoard(game) {
   }
     
 
-  // Transformer la chaîne FEN en tableau 2D représentant le plateau
+  
   var rows = boardFen.split('/');
   for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
       let row = rows[rowIndex];
@@ -225,7 +216,7 @@ function evaluateBoard(game) {
           }
       }
   }
-  console.log("le score est retourné")
+  //console.log("le score est retourné")
   return score;
 }
 
@@ -236,7 +227,7 @@ function findBestMove(game, depth,player) {
   var possibleMoves = game.moves();
   var bestMove = null;
   var bestMoveValue = Infinity;
-// game over
+  // game over
   if (possibleMoves.length === 0) return
   // Initialise les variables pour stocker les meilleurs mouvements
   
@@ -263,8 +254,8 @@ function findBestMove(game, depth,player) {
   }
   
   // Retourne le meilleur mouvement
-  console.log("Le meilleur mouvement est retourné");
-  console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
+  //console.log("Le meilleur mouvement est retourné");
+  //console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
 
   return bestMove;
 }
@@ -312,7 +303,7 @@ function onDrop (source, target) {
   if (game.turn() === 'b') {
 
     console.log("Tour de l'ia");
-    
+    // profondeur
     var depth = 3;
     var bestMove = findBestMove(game, depth, 'b');
     game.move(bestMove);
