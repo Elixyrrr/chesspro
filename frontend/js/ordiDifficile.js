@@ -256,28 +256,15 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
 
 function evaluateBoard(game, move, prevscore, color) {
   if (!move) return prevscore;
-  if (game.in_checkmate()) {
-
-    // Opponent is in checkmate (good for us)
-    if (move.color === color) {
-      return 10 ** 10;
-    }
-    // Our king's in checkmate (bad for us)
-    else {
-      return -(10 ** 10);
-    }
+  
+  if (game.in_check()) {
+    // Ajuste le score si il y a echec
+    prevscore += move.color === color ? 40 : -40;
   }
-
   if (game.in_draw() || game.in_threefold_repetition() || game.in_stalemate())
   {
     return 0;
   }
-  
-  if (game.in_check()) {
-    // Ajuste le score si il y a echec
-    prevscore += move.color === color ? 50 : -50;
-  }
-
   var from = [
     8 - parseInt(move.from[1]), // Ligne
     move.from.charCodeAt(0) - 'a'.charCodeAt(0) // Colonne
