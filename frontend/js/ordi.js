@@ -213,6 +213,8 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
 //fonction d'évaluation
 function evaluateBoard(game, move, prevscore, color) {
   if (!move) return prevscore;
+  
+  
 
   // Simplifie la gestion des pièces capturées
   if ('captured' in move) {

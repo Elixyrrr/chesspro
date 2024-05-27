@@ -254,8 +254,21 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
 }
 
 
+
+
+
 function evaluateBoard(game, move, prevscore, color) {
   if (!move) return prevscore;
+
+  if (game.in_checkmate()) {
+
+    if (move.color === color) {
+      return Infinity;
+    }
+    else {
+      return -Infinity;
+    }
+  }
   
   if (game.in_check()) {
     // Ajuste le score si il y a echec
@@ -265,6 +278,9 @@ function evaluateBoard(game, move, prevscore, color) {
   {
     return 0;
   }
+
+  
+
   var from = [
     8 - parseInt(move.from[1]), // Ligne
     move.from.charCodeAt(0) - 'a'.charCodeAt(0) // Colonne
