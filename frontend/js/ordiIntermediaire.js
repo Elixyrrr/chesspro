@@ -181,7 +181,9 @@ function evaluateBoard(game) {
     ],
   }
   
-
+  if (game.in_checkmate()) {
+    return -Infinity
+  }
   
   var rows = boardFen.split('/');
   for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
@@ -356,7 +358,6 @@ function onDrop (source, target) {
     // Regarde si c'est Echec et mat.
     if (game.in_checkmate()) {
       status = 'Fin de Partie, ' + moveColor + ' Est en Echec et Mat.'
-      alert("CHECKMATE");
       
     }
     // REgarde si c'est Egalité.

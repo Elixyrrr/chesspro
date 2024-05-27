@@ -213,7 +213,15 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
 //fonction d'évaluation
 function evaluateBoard(game, move, prevscore, color) {
   if (!move) return prevscore;
-  
+  if (game.in_checkmate()) {
+
+    if (move.color === color) {
+      return Infinity;
+    }
+    else {
+      return -Infinity;
+    }
+  }
   
 
   // Simplifie la gestion des pièces capturées
@@ -340,7 +348,6 @@ function onDrop(source, target) {
     // Regarde si c'est Echec et mat.
     if (game.in_checkmate()) {
       status = 'Fin de Partie, ' + moveColor + ' Est en Echec et Mat.'
-      alert("CHECKMATE");
       
     }
     // REgarde si c'est Egalité.

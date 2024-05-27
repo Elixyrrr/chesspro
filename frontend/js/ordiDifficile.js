@@ -428,7 +428,7 @@ function onDrop(source, target) {
     // Regarde si c'est Echec et mat.
     if (game.in_checkmate()) {
       status = 'Fin de Partie, ' + moveColor + ' Est en Echec et Mat.'
-      alert("CHECKMATE");
+
       
     }
     // REgarde si c'est Egalité.
@@ -454,7 +454,6 @@ function onDrop(source, target) {
   function abandonnerPartie() {
     if(game.game_over() === false){
       var status = ''
-      alert("Vous avez abandonné la partie.");
       var status = "Les blancs ont abandonné la partie."
       game.game_over = true;
       $status.html(status) }
