@@ -93,7 +93,7 @@ async function findBestMove(fen, color) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ fen: fen, color: color, depth: 7 }) // Ajoutez la profondeur ici
+      body: JSON.stringify({ fen: fen, color: color, depth: 4 }) // Ajoutez la profondeur ici
     });
     const data = await response.json();
     return data.best_move;
