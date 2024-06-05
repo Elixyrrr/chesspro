@@ -7,10 +7,9 @@ app.set('views', __dirname + '/views');
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.json());
+app.use(express.json({ limit: '50mb' }));
 console.log(bodyParser);
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 const path = require('path');
 /*const { CommandoClient, Command } = require('discord.js-commando');
 const { Structures } = require('discord.js');
@@ -51,6 +50,8 @@ client.login(process.env.TOKENDISCORD);
 client.on('ready', () => {
   console.log(`Connecté en tant que ${client.user.tag}`);
 });*/
+
+
 
 
 // Configuration des variables d'environnements
@@ -170,6 +171,54 @@ app.get('/search/:pseudo', (req, res) => {
 app.get('/Error', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/html/Error.html'));
 });
+
+
+
+const { exec } = require('child_process');
+
+
+app.use(bodyParser.json());
+
+app.post('/best_move', (req, res) => {
+    const { fen, depth, color } = req.body;
+
+    const pythonProcess = exec(`python minimax.py "${fen}" ${depth} ${color}`);
+
+    let jsonString = '';
+    let stderrString = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+        jsonString += data;
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        stderrString += data;
+    });
+
+    pythonProcess.on('close', (code) => {
+        console.error(`Python process exited with code ${code}`);
+        console.error(`stderr: ${stderrString}`);
+
+        if (code !== 0) {
+            res.status(500).json({ error: `Python process exited with code ${code}` });
+        } else {
+            try {
+                const result = JSON.parse(jsonString);
+                res.status(200).json(result);
+            } catch (e) {
+                console.error('Error parsing JSON:', e);
+                console.error('Received JSON:', jsonString);
+                res.status(500).json({ error: 'Failed to parse Python output' });
+            }
+        }
+    });
+});
+
+
+
+
+
+
 
 //Route d'authentification
 app.use('/api/auth', authRoutes);

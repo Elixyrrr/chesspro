@@ -68,276 +68,359 @@ var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
 var board = null
 var game = new Chess();
+var globalScore = 0;
 var $status = $('#status')
 var $fen = $('#fen')
 var $pgn = $('#pgn')
 let positionHistory = {};
-  
 
-function minimax(depth, game, alpha, beta, isMaximizingPlayer) {
-  if (depth === 0 || game.game_over()) {
-    
-    return isMaximizingPlayer ? evaluateBoard(game) : -evaluateBoard(game);
+
+  var config = {
+    draggable: true,
+    position: 'start',
+    onDragStart: onDragStart,
+    onDrop: onDrop,
+    onSnapEnd: onSnapEnd,
+    onMouseoutSquare: onMouseoutSquare,
+    onMouseoverSquare: onMouseoverSquare
   }
+  board = Chessboard('myBoard', config)
 
-  let possibleMoves = game.moves();
-  let bestScore = isMaximizingPlayer ? -Infinity : Infinity;
 
-  for (let i = 0; i < possibleMoves.length; i++) {
-    game.move(possibleMoves[i]);
-    // Maintenant, nous appelons minimax avec la nouvelle profondeur et les valeurs alpha et beta correctement ajustées
-    let score = minimax(depth - 1, game, -beta, -alpha, !isMaximizingPlayer);
-    game.undo();
-    
-    if (isMaximizingPlayer) {
-      bestScore = Math.max(bestScore, score);
-      alpha = Math.max(alpha, score);
-    } else {
-      bestScore = Math.min(bestScore, score);
-      beta = Math.min(beta, score);
-    }
-    
-    // Si le meilleur score actuel est mieux que le pire score de l'adversaire, coupe
-    if (bestScore >= beta) {
-      break;
+var pieceValues = { 
+  p: 100, n: 280, b: 320, r: 479, q: 929, k: 60000, k_e: 60000,
+  P: -100, N: -280, B: -320, R: -479, Q: -929, K: -60000, K_E: -60000 };
+var pieceSquareTable = {
+  p: [
+    [100, 100, 100, 100, 105, 100, 100, 100],
+    [78, 83, 86, 73, 102, 82, 85, 90],
+    [7, 29, 21, 44, 40, 31, 44, 7],
+    [-17, 16, -2, 15, 14, 0, 15, -13],
+    [-26, 3, 10, 9, 6, 1, 0, -23],
+    [-22, 9, 5, -11, -10, -2, 3, -19],
+    [-31, 8, -7, -37, -36, -14, 3, -31],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+  ],
+  n: [
+    [-66, -53, -75, -75, -10, -55, -58, -70],
+    [-3, -6, 100, -36, 4, 62, -4, -14],
+    [10, 67, 1, 74, 73, 27, 62, -2],
+    [24, 24, 45, 37, 33, 41, 25, 17],
+    [-1, 5, 31, 21, 22, 35, 2, 0],
+    [-18, 10, 13, 22, 18, 15, 11, -14],
+    [-23, -15, 2, 0, 2, 0, -23, -20],
+    [-74, -23, -26, -24, -19, -35, -22, -69],
+  ],
+  b: [
+    [-59, -78, -82, -76, -23, -107, -37, -50],
+    [-11, 20, 35, -42, -39, 31, 2, -22],
+    [-9, 39, -32, 41, 52, -10, 28, -14],
+    [25, 17, 20, 34, 26, 25, 15, 10],
+    [13, 10, 17, 23, 17, 16, 0, 7],
+    [14, 25, 24, 15, 8, 25, 20, 15],
+    [19, 20, 11, 6, 7, 6, 20, 16],
+    [-7, 2, -15, -12, -14, -15, -10, -10],
+  ],
+  r: [
+    [35, 29, 33, 4, 37, 33, 56, 50],
+    [55, 29, 56, 67, 55, 62, 34, 60],
+    [19, 35, 28, 33, 45, 27, 25, 15],
+    [0, 5, 16, 13, 18, -4, -9, -6],
+    [-28, -35, -16, -21, -13, -29, -46, -30],
+    [-42, -28, -42, -25, -25, -35, -26, -46],
+    [-53, -38, -31, -26, -29, -43, -44, -53],
+    [-30, -24, -18, 5, -2, -18, -31, -32],
+  ],
+  q: [
+    [6, 1, -8, -104, 69, 24, 88, 26],
+    [14, 32, 60, -10, 20, 76, 57, 24],
+    [-2, 43, 32, 60, 72, 63, 43, 2],
+    [1, -16, 22, 17, 25, 20, -13, -6],
+    [-14, -15, -2, -5, -1, -10, -20, -22],
+    [-30, -6, -13, -11, -16, -11, -16, -27],
+    [-36, -18, 0, -19, -15, -15, -21, -38],
+    [-39, -30, -31, -13, -31, -36, -34, -42],
+  ],
+  k: [
+    [4, 54, 47, -99, -99, 60, 83, -62],
+    [-32, 10, 55, 56, 56, 55, 10, 3],
+    [-62, 12, -57, 44, -67, 28, 37, -31],
+    [-55, 50, 11, -4, -19, 13, 0, -49],
+    [-55, -43, -52, -28, -51, -47, -8, -50],
+    [-47, -42, -43, -79, -64, -32, -29, -32],
+    [-4, 3, -14, -50, -57, -18, 13, 4],
+    [17, 30, -3, -14, 6, -1, 40, 18],
+  ],
+
+  // Roi en fin de partie
+  k_e: [
+    [-50, -40, -30, -20, -20, -30, -40, -50],
+    [-30, -20, -10, 0, 0, -10, -20, -30],
+    [-30, -10, 20, 30, 30, 20, -10, -30],
+    [-30, -10, 30, 40, 40, 30, -10, -30],
+    [-30, -10, 30, 40, 40, 30, -10, -30],
+    [-30, -10, 20, 30, 30, 20, -10, -30],
+    [-30, -30, 0, 0, 0, 0, -30, -30],
+    [-50, -30, -30, -30, -30, -30, -30, -50],
+  ],
+};
+var pst_b = {
+  p: pieceSquareTable['p'].slice().reverse(),
+  n: pieceSquareTable['n'].slice().reverse(),
+  b: pieceSquareTable['b'].slice().reverse(),
+  r: pieceSquareTable['r'].slice().reverse(),
+  q: pieceSquareTable['q'].slice().reverse(),
+  k: pieceSquareTable['k'].slice().reverse(),
+  k_e: pieceSquareTable['k_e'].slice().reverse(),
+};
+
+var pstOpponent = { w: pst_b, b: pieceSquareTable };
+var pstSelf = { w: pieceSquareTable, b: pst_b };
+
+
+function count(game) {
+  const squares = game.SQUARES;
+  let tot = 0;
+
+  for (let i = 0; i < squares.length; i++) {
+    const piece = game.get(squares[i]);
+    if (piece) {
+      tot++;
     }
   }
-  
-  return bestScore;
+  return tot;
 }
 
+function getProfondeur(game) {
+  const tot = count(game);
+  if (tot > 16) {
+      return 2; //début ou milieu de partie avec beaucoup de pièces
+  } else if (tot > 10) {
+      return 3; //milieu à fin de partie
+  } else {
+      return 4; //fin de partie avec peu de pièces
+  }
+}
 
-//fonction d'évaluation  
-function evaluateBoard(game) {
-  var fenStr = game.fen();
-  var boardFen = fenStr.split(' ')[0];
-  let score = 0;
-  const pieceValues = {
-    'P': 3, 'N': 9, 'B': 9, 'R': 15, 'Q': 27, 'K': 100,
-    'p': -3, 'n': -9, 'b': -9, 'r': -15, 'q': -27, 'k': -100
-  };
-  const centralSquares = ['d4', 'e4', 'd5', 'e5',];
-  
-  const pieceSquareTable = {
-    'p': [ // Pions
-        [0,   0,   0,   0,   0,   0,  0,   0],
-        [0,   0,   0,   0,   0,   0,  0,   0],
-        [.5,  -.5, -1,   -1,   -1, -1, -.5,   .5],
-        [1,   0,  -1,  -2,  -2,   -1,  0,   1],
-        [-.5,   -.5,  -1,  -2.5,  -2.5,  -1,  -.5,   -.5],
-        [-1, -1,  -2,  -3,  -3,  -2, -1,  -1],
-        [-1, -2,  -3,  -3,  -2,  -2, -2,  -2],
-        [-10,   -10,   -10,   -10,   -10,   -10,  -10,   -10]
-    ],
-    'n': [ //Chevalier 
-        [-5, -4, 3, 3, 3, -3, -4, -5],
-        [-4, -2,   0,   5,   5,   0, -20, -4],
-        [3,   0.5,  -1,  -1.5,  -1.5,  -1,   -0.5, 3],
-        [3,   0,  -1.5,  -2,  -2,  -1.5,   0, 3],
-        [-3,   0.5,  1.5,  2,  2,  1.5,   0.5, 3],
-        [-3,   0,  1,  1.5,  1.5,  1,   0, 3],
-        [4, -2,   0,   0,   0,   0, -2, 4],
-        [5, -4, -3, 3, 3, 3, -4, -5]
-    ],
-    'b': [ // bishop
-        [0,   0,   0,   0,   0,   0,  0,   0],
-        [5,  1,  1, -2, -2,  1, 1,   5],
-        [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
-        [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
-        [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
-        [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
-        [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
-        [0,   0,   0,   0,   0,   0,  0,   0]
-    ],
-    'r': [ // Tour
-      [0,   0,   0,   0,   0,   0,  0,   0],
-      [5,  1,  1, -2, -2,  1, 1,   5],
-      [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
-      [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
-      [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
-      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
-      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
-      [0,   0,   0,   0,   0,   0,  0,   0]
-    ],
-    'q': [ // Reine
-      [0,   0,   0,   0,   0,   0,  0,   0],
-      [5,  1,  1, -2, -2,  1, 1,   5],
-      [.5,  -.5, -1,   0,   0, -1, -.5,   .5],
-      [-3,   -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
-      [-3,  -2.5,  -2, -3.5, -3, -2.5, -.5,  -3],
-      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
-      [-2, -2.5,  -2, -2.5, -2, -2.5, -.5,  -2],
-      [0,   0,   0,   0,   0,   0,  0,   0]
-    ],
-    'k': [ // King
-      [10,   10,   10,   10,   10,   10,  10,   10],
-      [5,  5,  5, 5,  5,  5,  5,  5 ],
-      [5,  5,  5, 5,  5,  5,  5,  5 ],
-      [5,  5,  5, 5,  5,  5,  5,  5 ],
-      [5,  5,  5, 5,  5,  5,  5,  5 ],
-      [5,  5,  5, 5,  5,  5,  5,  5 ],
-      [2, 2.5,  2, 2, 2, -2.5, 1,  1],
-      [-4,   -4,   -4,   -3,   -3,   -3,  -4,   -4]
-    ],
+function minimax(game, depth, alpha, beta, isMaximizingPlayer, score, color) {
+  positionCount++;
+
+  if (depth === 0 || game.game_over()) {
+      return [null, score];
   }
-  
-  if (game.in_checkmate()) {
-    return -Infinity
+
+  var children = game.moves({ verbose: true });
+
+  if (children.length === 0) {
+      return [null, score];
   }
-  
-  var rows = boardFen.split('/');
-  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-      let row = rows[rowIndex];
-      let colIndex = 0;
-      
-      for (let charIndex = 0; charIndex < row.length; charIndex++) {
-          let char = row[charIndex];
-          let position = String.fromCharCode( colIndex) + ( rowIndex);
-          if (isNaN(char)) {
-              if (char in pieceValues) {
-                  score += pieceValues[char];
-                  let pieceTable = pieceSquareTable[char];
-              if (pieceTable) { // S'assurer que la table existe
-                  // Ajouter/substraire la valeur de la pièce en fonction de sa position sur le plateau
-                  score += pieceTable[7 - rowIndex][colIndex] * (char == char.toLowerCase() ? -1 : 1);
-              }
-                  if (centralSquares.includes(position)) {
-                      score += (char === char.toLowerCase()) ? -2 : 2;
-                  }
-                  let pieceColor = char == char.toLowerCase() ? 'white' : 'black';
-                  let opponentPiece = game.get(position);
-                  if (opponentPiece && opponentPiece.color !== pieceColor) {
-                      // Si l'IA met une pièce adverse en danger, diminue le score
-                      score -= pieceValues;
-    }
-              }
-              
-              colIndex++;
-          } else {
-              colIndex += parseInt(char, 10);
+
+  var maxValue = -Infinity;
+  var minValue = Infinity;
+  var bestMove = null;
+
+  for (var i = 0; i < children.length; i++) {
+      var currMove = children[i];
+      var moveResult = game.move(currMove);
+      if (moveResult === null) continue; // Move interdit
+
+      var newscore = evaluateBoard(game, moveResult, score, color);
+      var [childBestMove, childValue] = minimax(
+          game, depth - 1, alpha, beta, !isMaximizingPlayer, newscore, color
+      );
+
+      game.undo();
+
+      if (isMaximizingPlayer) {
+          if (childValue > maxValue) {
+              maxValue = childValue;
+              bestMove = moveResult;
           }
+          alpha = Math.max(alpha, childValue);
+      } else {
+          if (childValue < minValue) {
+              minValue = childValue;
+              bestMove = moveResult;
+          }
+          beta = Math.min(beta, childValue);
+      }
+
+      if (beta <= alpha) {
+          break;
       }
   }
-  //console.log("le score est retourné")
-  return score;
+
+  return isMaximizingPlayer ? [bestMove, maxValue] : [bestMove, minValue];
 }
 
 
-  
-function findBestMove(game, depth,player) {
-  // Récupère les mouvements possibles
-  var possibleMoves = game.moves();
-  var bestMove = null;
-  var bestMoveValue = Infinity;
-  // game over
-  if (possibleMoves.length === 0) return
-  // Initialise les variables pour stocker les meilleurs mouvements
-  
 
-  // Évalue chaque mouvement possible 
-  for (var i = 0; i < possibleMoves.length; i++) {
-    // Effectue le mouvement
-    var move = possibleMoves[i];
-    game.move(move);
-    
 
-    // Calcule la valeur du mouvement en utilisant l'algorithme Minimax
-    var moveValue = minimax(depth - 1, game, player, -Infinity, Infinity);
-    console.log("Mouvement évalué : ", move, " avec un score de : ", moveValue);
-    // Annule le mouvement
-    game.undo();
 
-    // Si la valeur du mouvement est meilleure que le meilleur mouvement actuel, le remplace
-    if (moveValue < bestMoveValue) {
-      bestMoveValue = moveValue;
-      bestMove = move;
-      
+function evaluateBoard(game, move, prevscore, color) {
+  if (!move) return prevscore;
+
+  if (game.in_checkmate()) {
+
+    if (move.color === color) {
+      return Infinity;
+    }
+    else {
+      return -Infinity;
     }
   }
   
-  // Retourne le meilleur mouvement
-  //console.log("Le meilleur mouvement est retourné");
-  //console.log("Le meilleur mouvement est:", bestMove, "avec un score de:", bestMoveValue);
-
-  return bestMove;
-}
-  
-function removeGreySquares () {
-  $('#myBoard .square-55d63').css('background', '')
-}
-function greySquare (square) {
-  var $square = $('#myBoard .square-' + square)
-  var background = whiteSquareGrey
-  if ($square.hasClass('black-3c85d')) {
-    background = blackSquareGrey
+  if (game.in_check()) {
+    // Ajuste le score si il y a echec
+    prevscore += move.color === color ? 40 : -40;
   }
-  $square.css('background', background)
-}
-function onDragStart (source, piece) {
-  // Permet de ne pas prendre une pièce une fois que la partie est finie.
-  if (game.game_over()) return false
-  // seulement pour les blancs
-  if (piece.search(/^b/) !== -1) return false
+  if (game.in_draw() || game.in_threefold_repetition() || game.in_stalemate())
+  {
+    return 0;
+  }
+
+  
+
+  var from = [
+    8 - parseInt(move.from[1]), // Ligne
+    move.from.charCodeAt(0) - 'a'.charCodeAt(0) // Colonne
+  ];
+  var to = [
+    8 - parseInt(move.to[1]),
+    move.to.charCodeAt(0) - 'a'.charCodeAt(0),
+  ];
+
+  
+  if ('captured' in move) {
+    // Ajuste le score en fonction des captures de piece
+    if (move.color === color) {
+      prevscore+= pieceValues[move.captured] + pstOpponent[move.color][move.captured][to[0]][to[1]];
+    } else {
+      prevscore -= pieceValues[move.captured] + pstSelf[move.color][move.captured][to[0]][to[1]];
+    }
+  }
+
+  // Promotion en reine pour simplifier
+  if (move.flags.includes('p')) {
+    
+    move.promotion = 'q';
+
+    if (move.color === color) {
+      prevscore += pieceValues[move.promotion] + pstSelf[move.color][move.promotion][to[0]][to[1]];
+      prevscore -= pieceValues[move.piece] + pstSelf[move.color][move.piece][from[0]][from[1]];
+    } else {
+      prevscore += pieceValues[move.piece] + pstSelf[move.color][move.piece][from[0]][from[1]];
+      prevscore -= pieceValues[move.promotion] + pstSelf[move.color][move.promotion][to[0]][to[1]];
+    }
+  } else {
+    // Ajuste le score en fonction des mouvements
+    if (move.color !== color) {
+      prevscore += pstSelf[move.color][move.piece][from[0]][from[1]];
+      prevscore -= pstSelf[move.color][move.piece][to[0]][to[1]];
+    } else {
+      prevscore -= pstSelf[move.color][move.piece][from[0]][from[1]];
+      prevscore += pstSelf[move.color][move.piece][to[0]][to[1]];
+    }
+  }
+
+  return prevscore;
 }
 
-function onDrop (source, target) {
+function findBestMove(game, color, currscore) {
+  positionCount = 0;
+  const profondeurinit = getProfondeur(game); 
+
+  var [bestMove, bestMoveValue] = minimax(
+    game,
+    profondeurinit,
+    -Infinity,
+    Infinity,
+    true,
+    currscore,
+    color
+  );
+
+  return [bestMove, bestMoveValue];
+}
+
+
+
+function removeGreySquares() {
+  $('#myBoard .square-55d63').css('background', '');
+}
+
+function greySquare(square) {
+  var $square = $('#myBoard .square-' + square);
+  var background = whiteSquareGrey;
+  if ($square.hasClass('black-3c85d')) {
+      background = blackSquareGrey;
+  }
+  $square.css('background', background);
+}
+
+function onMouseoverSquare(square, piece) {
+  // Ne fait rien si ce n'est pas le tour de cette couleur de pièce
+  if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+      return;
+  }
+
+  var moves = game.moves({
+      square: square,
+      verbose: true
+  });
+
+  if (moves.length === 0) return;
+
+  // Met en surbrillance la case source (où la pièce se trouve)
+  greySquare(square);
+
+  // Met en surbrillance toutes les cases de destination possibles pour cette pièce
+  for (var i = 0; i < moves.length; i++) {
+      greySquare(moves[i].to);
+  }
+}
+
+function onMouseoutSquare(square, piece) {
   removeGreySquares();
+}
 
-  // Regarde si le coup est autorisé.
+function onDragStart(source, piece) {
+  //Permet de ne pas prendre une pièce une fois que la partie est finie.
+  if (game.game_over()) return false;
+  
+  // Seulement pour les blancs
+  if (piece.search(/^b/) !== -1) return false;
+}
+
+
+function onDrop(source, target) {
+   // Regarde si le coup est autorisé.
   var move = game.move({
     from: source,
     to: target,
-    promotion: 'q'
+    promotion: 'q' 
   });
-
   // Si le coup est illégal, annule le coup.
-  if (move === null) return 'snapback';
+  if (move === null) return 'snapback'; 
 
   // Met à jour l'état du jeu.
   updateStatus();
-
-
   
-  // Si la partie est terminée, arrête la fonction.
-  if (game.game_over()) return;
-
-  // Si c'est au tour de l'IA de jouer.
   if (game.turn() === 'b') {
+    
     window.setTimeout(function () {
-      console.log("Tour de l'ia");
-      // profondeur
-      var depth = 3;
-      var bestMove = findBestMove(game, depth, 'b');
+      var [bestMove] = findBestMove(game, 'b', globalScore);
+      if (bestMove) {
       game.move(bestMove);
       board.position(game.fen());
-      updateStatus();
+      updateStatus();}
       
-      
-    }, 100);
-    
-    
-    
-    console.log("Le coup est joué");
-  
+    }, 50); // ajout d'un délai pour le temps de réflexion
   }
 }
-  
-  function onMouseoverSquare (square, piece) {
-    // Donne les coups possibles
-    var moves = game.move({
-      square: square,
-      verbose: true
-    })
-  
-    // Retourne si il n'y a pas de coup possible
-    if (moves.length === 0) return
-  
-    // Fonction qui permet d'afficher les coups possibles en Gris
-    greySquare(square)
-    for (var i = 0; i < moves.length; i++) {
-      greySquare(moves[i].to)
-    }
-  }
+
+
   //Quand la souris n'est plus sur la case enleve les coups possibles.
   function onMouseoutSquare (square, piece) {
     removeGreySquares()
@@ -358,6 +441,7 @@ function onDrop (source, target) {
     // Regarde si c'est Echec et mat.
     if (game.in_checkmate()) {
       status = 'Fin de Partie, ' + moveColor + ' Est en Echec et Mat.'
+
       
     }
     // REgarde si c'est Egalité.
@@ -383,7 +467,6 @@ function onDrop (source, target) {
   function abandonnerPartie() {
     if(game.game_over() === false){
       var status = ''
-      alert("Vous avez abandonné la partie.");
       var status = "Les blancs ont abandonné la partie."
       game.game_over = true;
       $status.html(status) }
@@ -392,17 +475,6 @@ function onDrop (source, target) {
   
   
   
-  //Configuration des options du plateau.
-  var config = {
-    draggable: true,
-    position: 'start',
-    onDragStart: onDragStart,
-    onDrop: onDrop,
-    onSnapEnd: onSnapEnd,
-    onMouseoutSquare: onMouseoutSquare,
-    onMouseoverSquare: onMouseoverSquare
-  }
-  board = Chessboard('myBoard', config)
   
   
   //Création de la Pendule.
