@@ -3,7 +3,7 @@ import chess
 import chess.engine
 import sys
 import json
-
+import os
 async def evaluate_best_move_for_black(engine_path, fen, depth):
     # Load the Stockfish chess engine
     transport, engine = await chess.engine.popen_uci(engine_path)
@@ -29,7 +29,11 @@ async def evaluate_best_move_for_black(engine_path, fen, depth):
     return result_json
 
 async def main():
-    engine_path = r"stockfish-ubuntu-x86-64-avx2"
+
+# Si votre fichier est dans le même dossier que votre script Python
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    engine_path = os.path.join(dir_path, "stockfish-windows-x86-64-avx2.exe")
+
     fen = sys.argv[1]  # FEN passed as the first command-line argument
     depth = int(sys.argv[2])  # Depth passed as the second command-line argument
     result = await evaluate_best_move_for_black(engine_path, fen, depth)
