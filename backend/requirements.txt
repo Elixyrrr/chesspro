@@ -1,6 +1,3 @@
 chess
-asyncio
-chess
-chess.engine
 sys
 json
