@@ -29,7 +29,7 @@ async def evaluate_best_move_for_black(engine_path, fen, depth):
     return result_json
 
 async def main():
-    engine_path = r"C:\Users\Ilyes\OneDrive\Bureau\chess\chesspro\backend\Modele\stockfish-windows-x86-64-avx2.exe"
+    engine_path = r"Modele\stockfish-windows-x86-64-avx2.exe"
     fen = sys.argv[1]  # FEN passed as the first command-line argument
     depth = int(sys.argv[2])  # Depth passed as the second command-line argument
     result = await evaluate_best_move_for_black(engine_path, fen, depth)
