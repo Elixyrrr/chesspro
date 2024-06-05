@@ -176,9 +176,6 @@ app.get('/Error', (req, res) => {
 
 const { exec } = require('child_process');
 
-
-app.use(bodyParser.json());
-
 app.post('/best_move', (req, res) => {
     const { fen, depth, color } = req.body;
 

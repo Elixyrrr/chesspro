@@ -88,12 +88,12 @@ let positionHistory = {};
 
 async function findBestMove(fen, color) {
   try {
-    const response = await fetch('http://localhost:3000/best_move', {
+    const response = await fetch('/best_move', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ fen: fen, color: color, depth: 5 }) // Ajoutez la profondeur ici
+      body: JSON.stringify({ fen: fen, color: color, depth: 7 }) // Ajoutez la profondeur ici
     });
     const data = await response.json();
     return data.best_move;
