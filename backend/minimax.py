@@ -4,38 +4,39 @@ import chess.engine
 import sys
 import json
 import os
+
 async def evaluate_best_move_for_black(engine_path, fen, depth):
-    # Load the Stockfish chess engine
-    transport, engine = await chess.engine.popen_uci(engine_path)
-    board = chess.Board(fen)
+    try:
+        # Vérifier que le fichier existe
+        if not os.path.exists(engine_path):
+            raise FileNotFoundError(f"Stockfish not found at {engine_path}")
+        
+        transport, engine = await chess.engine.popen_uci(engine_path)
+        board = chess.Board(fen)
 
-    # If it's white's turn to move, play the best move for white
-    if board.turn == chess.WHITE:
-        result_white = await engine.play(board, chess.engine.Limit(depth=depth))
-        board.push(result_white.move)
+        if board.turn == chess.WHITE:
+            result_white = await engine.play(board, chess.engine.Limit(depth=depth))
+            board.push(result_white.move)
 
-    # Now it's black's turn, request the best move for black
-    result_black = await engine.play(board, chess.engine.Limit(depth=depth))
+        result_black = await engine.play(board, chess.engine.Limit(depth=depth))
+        await engine.quit()
 
-    # Properly close the engine
-    await engine.quit()
-
-    # Return the result in JSON format
-    result_json = {
-        'best_move': result_black.move.uci(),
-        'evaluation': str(result_black.info.get("score")),
-        'final_board_fen': board.fen()
-    }
-    return result_json
+        result_json = {
+            'best_move': result_black.move.uci(),
+            'evaluation': str(result_black.info.get("score")),
+            'final_board_fen': board.fen()
+        }
+        return result_json
+    except Exception as e:
+        print(f"Error: {str(e)}", file=sys.stderr)
+        return {"error": str(e)}
 
 async def main():
-
-# Si votre fichier est dans le même dossier que votre script Python
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    engine_path = os.path.join(dir_path, "stockfish-ubuntu-x86-64-avx2.tar")
-
-    fen = sys.argv[1]  # FEN passed as the first command-line argument
-    depth = int(sys.argv[2])  # Depth passed as the second command-line argument
+    engine_path = os.path.join(dir_path, "stockfish-linux")  # Corrigé ici
+    
+    fen = sys.argv[1]
+    depth = int(sys.argv[2])
     result = await evaluate_best_move_for_black(engine_path, fen, depth)
     print(json.dumps(result))
 
