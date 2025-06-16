@@ -1,0 +1,152 @@
+body {
+    background-color: rgb(102, 119, 133);
+}
+
+/* -----------------------------STYLE DE LA PAGE RECHERCHE--------------------------------------*/
+
+/*---topnav---*/
+
+.topnav {
+    position: fixed;
+    width: 200px;
+    height: 660px;
+    background-color: #333;
+    border-radius: 4px;
+    border: 4px solid rgb(220, 218, 218);
+    box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2);  
+}
+  
+.topnav a {
+    text-decoration: none;
+    color: white;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    position: absolute;
+}
+  
+.topnav a:hover {
+    font-weight: bolder;
+}
+ 
+.topnav .accueil {
+    top: 30px;
+    left: 20px;
+}
+
+.topnav .jouer {
+    top: 90px;
+    left: 20px;
+}
+  
+.topnav .ordi {
+    top: 150px;
+    left: 20px;
+}
+  
+.topnav .historique {
+    top: 210px;
+    left: 20px;
+}
+
+.topnav .profil {
+    top: 300px;
+    left: 20px;
+}
+.topnav .search {
+    top: 370px;
+    left: 20px;
+    color:  rgb(253, 190, 190);
+}
+
+.topnav .connexion {
+    top: 610px;
+    left: 20px;
+}
+
+.topnav .deconnexion {
+    top: 610px;
+    left: 20px;
+}
+
+.topnav .profil:hover {
+    font-weight: normal;
+}
+
+.topnav .ordi:hover {
+    left: 5px;
+}
+  
+.topnav .connexion:hover {
+    left: 5px;
+}
+
+.user-info span {
+    position: absolute;
+    color:  rgb(253, 190, 190); 
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-style: italic;
+    top: 550px;
+    left: 20px;
+}
+
+.recherche {
+    position: fixed;
+    width: 600px;
+    height: 500px;
+    background-color: rgb(220, 218, 218);
+    border-radius: 4px;
+    border: 2px solid #333;
+    box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2); 
+    top: 90px;
+    left: 500px;
+    text-align: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.recherche h1 {
+    font-size: 28px;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    font-weight: bold;
+    color: #333;
+}
+
+.recherche label {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.recherche input[type="text"] {
+    width: 80%;
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.recherche select {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 2px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+}
+#searchbutton {
+    margin-left: 145px;
+    margin-top: 60px;
+    font-size: 20px;
+    font-family: Georgia, Times, 'Times New Roman', serif;
+    background-color: white;
+    padding: 10px 25px;
+    box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2);
+}
+

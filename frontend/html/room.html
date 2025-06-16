@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu d'échecs</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+    <link rel="manifest" href="../img/site.webmanifest">
+    <link rel="stylesheet" href="../css/room.css">
+  </head>
+
+  <body>
+    <div class="topnav">
+      <a class="accueil" href="/Accueil">Accueil</a>   
+      <a class="jouer">Jouer en ligne</a>
+      <a class="ordi" href="/choixDifficulte" >Contre ordinateur</a>
+      <a class="historique" id="history" href="/Historique">Historique et Analyse</a>
+      <a class="profil" id="profil" href="/profil">Profil</a>
+      <a class="search" id="search" href="/Recherche">Rercherche</a>
+      <div class="user-info">
+        <a class="connexion" id="connexion" href="/Pere">Page de connexion</a>
+        <a class="deconnexion" id="deconnexion" name="logout">Déconnexion</a>
+        <span id="username"></span>
+      </div>
+    </div>
+
+    <p>
+      En attente d'un adversaire...
+    </p>
+
+    <div id="roomInfo">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../js/room.js"></script>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jeu d'échecs</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+    <link rel="manifest" href="../img/site.webmanifest">
+    <link rel="stylesheet" href="../css/profil2.css">
+  </head>
+
+  <body>
+    <div class="topnav">
+        <a class="accueil" href="/Accueil">Accueil</a>
+        <a class="jouer" href="/Partie">Jouer en ligne</a>
+        <a class="ordi" href="/choixDifficulte" >Contre ordinateur</a>
+        <a class="historique" href="/Historique" id="history">Historique et Analyse</a>   
+        <a class="profil" id="profil" href="/Profil">Profil</a>
+        <a class="search" id="search" href="/Recherche">Rercherche</a>
+        <div class="user-info">
+          <a class="connexion" id="connexion" href="/Pere">Page de connexion</a>
+          <a class="deconnexion" id="deconnexion" name="logout">Déconnexion</a>
+          <span id="username"></span>
+        </div>
+    </div>
+
+    <div class="profile">
+      <div>
+        
+      <h1>Modifier mon profil</h1>
+      <form id="update-profile-form">
+        <div id="champ">
+          <label for="pseudo">Nom d'utilisateur :</label>
+          <input type="text" id="pseudo" name="pseudo" required>
+        </div>
+
+        <div id="champ">
+          <label for="email">Adresse email :</label>
+          <input type="email" id="email" name="email">
+        </div>
+
+        <div id="champ">
+          <label for="password">Mot de passe :</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+
+        <div id="champ">
+          <label for="password-confirm">Confirmer le mot de passe :</label>
+          <input type="password" id="password-confirm" name="password-confirm" required>
+        </div>
+
+        <input id="save" type="submit" value="Enregistrer les modifications">
+      </form>
+      </div>
+    </div>
+
+    <script src="../js/profil2.js"></script>
+    <script src="../js_librairies/jqueryy.js"></script>
+  </body>
+</html>   

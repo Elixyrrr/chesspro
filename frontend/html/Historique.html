@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jeu d'échecs</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+    <link rel="manifest" href="../img/site.webmanifest">
+    <link rel="stylesheet" href="../css/historique.css">
+  </head>
+
+  <body>
+    <div id="navbar" class="topnav">
+      <a class="accueil" href="/Accueil">Accueil</a> 
+      <a class="jouer" href="/Partie" >Jouer en ligne</a>
+      <a class="ordi" href="/choixDifficulte" >Contre ordinateur</a>
+      <a class="historique" id="history">Historique et Analyse</a>  
+      <a class="profil" id="profil" href="/profil">Profil</a>
+      <a class="search" id="search" href="/Recherche">Rercherche</a>
+      <div class="user-info">
+        <a class="connexion" id="connexion" href="/Pere">Page de connexion</a>
+        <a class="deconnexion" id="deconnexion" name="logout">Déconnexion</a>
+        <span id="username"></span>
+      </div>
+    </div>
+
+    <div class="menu2">
+      <a class="historique" href="/Historique2">Historique des parties</a>  
+      <a class="analyse" href="/Analyse">Analyse</a>
+    </div>
+
+    <script src="../js/historique.js"></script>
+  </body>
+</html>
