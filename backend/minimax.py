@@ -32,7 +32,7 @@ async def main():
 
 # Si votre fichier est dans le même dossier que votre script Python
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    engine_path = os.path.join(dir_path, "stockfish-windows-x86-64-avx2.exe")
+    engine_path = os.path.join(dir_path, "stockfish-ubuntu-x86-64-avx2.tar")
 
     fen = sys.argv[1]  # FEN passed as the first command-line argument
     depth = int(sys.argv[2])  # Depth passed as the second command-line argument
